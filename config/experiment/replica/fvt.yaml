@@ -37,5 +37,5 @@ trainer:
   max_steps: 300_001
 
 train:
-  depth_sup: true
+  has_depth: true
   depth_mode: depth

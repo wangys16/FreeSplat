@@ -127,7 +127,7 @@ class TrainCfg:
     depth_mode: DepthRenderingMode | None
     load_depth: UseDepthMode | None
     extended_visualization: bool
-    depth_sup: bool = False
+    has_depth: bool = False
 
 
 @runtime_checkable
@@ -564,7 +564,7 @@ class ModelWrapper(LightningModule):
         self.num_evals.append(num)
 
         # Construct comparison image.
-        if not self.train_cfg.depth_sup:
+        if not self.train_cfg.has_depth:
             context_figs = []
             for fig in batch["context"]["image"][0]:
                 context_figs.append(fig)
