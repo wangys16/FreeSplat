@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <p align="center">
 
   <h1 align="center">FreeSplat: Generalizable 3D Gaussian Splatting Towards Free-View Synthesis of Indoor Scenes Reconstruction</h1>
@@ -148,3 +149,6 @@ If you find our work helpful, please consider citing our paper. Thank you!
 # Acknowledgements
 
 This work is supported by the Agency for Science, Technology and Research (A*STAR) under its MTC Programmatic Funds (Grant No. M23L7b0021).
+=======
+# test_freesplat
+>>>>>>> 32445ed3ca1edad1f978d5c661e2a3b62f77ec3f
