@@ -441,6 +441,7 @@ class AVGFeatureVolumeManager(CostVolumeManager):
                         max_depth: Tensor,
                         depth_planes_bdhw: Tensor = None,
                         return_mask: bool = False,
+                        context_images = None,
                     ):
 
         """

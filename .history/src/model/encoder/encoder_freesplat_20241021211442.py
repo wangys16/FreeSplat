@@ -283,6 +283,7 @@ class EncoderFreeSplat(Encoder[EncoderFreeSplatCfg]):
                                         cur_invK=cur_inverse,
                                         min_depth=near,
                                         max_depth=far,
+                                        context_images=None,
                                     )
 
         cost_volume_features = self.cv_encoder(
