@@ -1,0 +1,19 @@
+[2024-10-09 20:11:08,179][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:204: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python /home/wang/lab/freesplat_github/src/main.py +experim ...
+[2024-10-09 20:11:08,209][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/timm/models/_factory.py:117: UserWarning: Mapping deprecated model name tf_efficientnetv2_s_in21ft1k to current tf_efficientnetv2_s.in21k_ft_in1k.
+  model = create_fn(
+[2024-10-09 20:11:08,390][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/tf_efficientnetv2_s.in21k_ft_in1k)
+[2024-10-09 20:11:08,648][timm.models._hub][INFO] - [timm/tf_efficientnetv2_s.in21k_ft_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+Error executing job with overrides: ['+experiment=fvt', 'checkpointing.load=checkpoints/fvt.ckpt', '+output_dir=test_fvt_3_woptf', 'mode=test', 'dataset/view_sampler=evaluation', 'dataset.view_sampler.num_context_views=3', 'model.encoder.fusion=False', 'strict=False']
+Traceback (most recent call last):
+  File "/home/wang/lab/freesplat_github/src/main.py", line 113, in train
+    encoder, encoder_visualizer = get_encoder(cfg.model.encoder,
+  File "/home/wang/lab/freesplat_github/src/model/encoder/__init__.py", line 17, in get_encoder
+    encoder = encoder(cfg, depth_range=depth_range)
+  File "/home/wang/lab/freesplat_github/src/model/encoder/encoder_epipolar.py", line 170, in __init__
+    self.est_depth = cfg.est_depth
+AttributeError: 'EncoderEpipolarCfg' object has no attribute 'est_depth'. Did you mean: 'use_depth'?
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.

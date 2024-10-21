@@ -1,0 +1,253 @@
+[2024-10-10 16:18:38,413][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:204: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python /home/wang/lab/freesplat_github/src/main.py +experim ...
+[2024-10-10 16:18:38,446][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/timm/models/_factory.py:117: UserWarning: Mapping deprecated model name tf_efficientnetv2_s_in21ft1k to current tf_efficientnetv2_s.in21k_ft_in1k.
+  model = create_fn(
+[2024-10-10 16:18:38,815][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/tf_efficientnetv2_s.in21k_ft_in1k)
+[2024-10-10 16:18:39,066][timm.models._hub][INFO] - [timm/tf_efficientnetv2_s.in21k_ft_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+Setting up [LPIPS] perceptual loss: trunk [vgg], v[0.1], spatial [off]
+[2024-10-10 16:18:39,300][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+[2024-10-10 16:18:39,301][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=VGG16_Weights.IMAGENET1K_V1`. You can also use `weights=VGG16_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+Loading model from: /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/lpips/weights/v0.1/vgg.pth
+dataset:
+    view_sampler: {'name': 'bounded', 'num_target_views': 4, 'num_context_views': 2, 'min_distance_between_context_views': 25, 'max_distance_between_context_views': 25, 'min_distance_to_context_views': 0, 'warm_up_steps': 15000, 'initial_min_distance_between_context_views': 15, 'initial_max_distance_between_context_views': 25}
+    name: scannet
+    roots: ['/home/wang/ssd/scannet/scannet_surn/scannet']
+    make_baseline_1: False
+    augment: True
+    image_shape: [384, 512]
+    background_color: [0.0, 0.0, 0.0]
+    cameras_are_circular: False
+    baseline_epsilon: 0.001
+    max_fov: 100.0
+    load_depth: True
+    overfit_to_scene: None
+    near: 0.5
+    far: 15.0
+model:
+    encoder: {'backbone': {'name': 'efficientnet', 'model': 'efficientnet', 'd_out': 512}, 'name': 'freesplat', 'opacity_mapping': {'initial': 0.0, 'final': 0.0, 'warm_up': 1}, 'num_monocular_samples': 32, 'num_surfaces': 1, 'predict_opacity': False, 'near_disparity': 3.0, 'gaussians_per_pixel': 3, 'gaussian_adapter': {'gaussian_scale_min': 0.5, 'gaussian_scale_max': 15.0, 'sh_degree': 2, 'depth_sup': True}, 'd_feature': 128, 'epipolar_transformer': {'self_attention': {'patch_size': 4, 'num_octaves': 10, 'num_layers': 2, 'num_heads': 4, 'd_token': 128, 'd_dot': 128, 'd_mlp': 256}, 'num_octaves': 10, 'num_layers': 2, 'num_heads': 4, 'num_samples': 32, 'd_dot': 128, 'd_mlp': 256, 'downscale': 4}, 'visualizer': {'num_samples': 8, 'min_resolution': 256, 'export_ply': False}, 'apply_bounds_shim': False, 'use_epipolar_transformer': False, 'use_transmittance': False, 'load_depth': False, 'est_depth': 'cost', 'unimatch_weights_path': 'checkpoints/gmdepth-scale1-resumeflowthings-scannet-5d9d7964.pth', 'multiview_trans_attn_split': 2, 'costvolume_unet_feat_dim': 128, 'costvolume_unet_channel_mult': [1, 1, 1], 'costvolume_unet_attn_res': [], 'depth_unet_feat_dim': 64, 'depth_unet_attn_res': [], 'depth_unet_channel_mult': [1, 1, 1], 'downscale_factor': 4, 'shim_patch_size': 4, 'wo_depth_refine': False, 'wo_cost_volume': False, 'wo_backbone_cross_attn': False, 'wo_cost_volume_refine': False, 'use_epipolar_trans': False, 'num_views': 2, 'num_depth_candidates': 128}
+    decoder: {'name': 'splatting_cuda'}
+loss:
+    mse: {'weight': 1.0}
+    lpips: {'weight': 0.05, 'apply_after_step': 0}
+output_dir: train_2views
+wandb:
+    project: pixelsplat
+    entity: wangys10272910
+    name: scannet
+    mode: offline
+    tags: ['scannet', '384x512']
+mode: train
+data_loader:
+    train: {'num_workers': 16, 'persistent_workers': True, 'batch_size': 1, 'seed': 1234}
+    test: {'num_workers': 4, 'persistent_workers': False, 'batch_size': 1, 'seed': 2345}
+    val: {'num_workers': 1, 'persistent_workers': True, 'batch_size': 1, 'seed': 3456}
+optimizer:
+    lr: 0.0001
+    warm_up_steps: 100
+    cosine_lr: True
+checkpointing:
+    load: None
+    every_n_train_steps: 10000
+    save_top_k: -1
+train:
+    load_depth: None
+    depth_mode: depth
+    extended_visualization: False
+    depth_sup: True
+test:
+    output_path: outputs/test
+seed: 111123
+strict: True
+trainer:
+    max_steps: 300001
+    val_check_interval: 5000
+    gradient_clip_val: 0.01
+    prog_bar: True
+index_path: assets/evaluation_index_scannet.json
+--------------------data root: /home/wang/ssd/scannet/scannet_surn/scannet
+validation dataloader length: 80
+validation step 0; scene = ['scene0000_01_0']; context = [[4060, 4083]]
+[2024-10-10 16:18:41,896][py.warnings][WARNING] - /home/wang/lab/freesplat_github/src/model/encoder/common/gaussian_adapter.py:39: UserWarning: torch.range is deprecated and will be removed in a future release because its behavior is inconsistent with Python's range builtin. Instead, use torch.arange, which produces values in [start, end).
+  i_coords, j_coords = torch.meshgrid(torch.range(0,height-1), torch.range(0,width-1), indexing='ij')
+You are using a CUDA device ('NVIDIA GeForce RTX 4090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+  | Name    | Type                 | Params
+-------------------------------------------------
+0 | encoder | EncoderFreeSplat     | 50.5 M
+1 | decoder | DecoderSplattingCUDA | 0
+2 | losses  | ModuleList           | 0
+-------------------------------------------------
+50.5 M    Trainable params
+0         Non-trainable params
+50.5 M    Total params
+202.177   Total estimated model params size (MB)
+Setting up [LPIPS] perceptual loss: trunk [vgg], v[0.1], spatial [off]
+Loading model from: /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/lpips/weights/v0.1/vgg.pth
+psnr: tensor(0., device='cuda:0') lpips: tensor(0., device='cuda:0') ssim: tensor(0., device='cuda:0') mask: tensor(0, device='cuda:0')
+[2024-10-10 16:18:43,328][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/pytorch_lightning/utilities/data.py:77: Trying to infer the `batch_size` from an ambiguous collection. The batch size we found is 1. To avoid any miscalculations, use `self.log(..., batch_size=batch_size)`.
+[2024-10-10 16:18:43,335][py.warnings][WARNING] - /home/wang/lab/freesplat_github/src/model/model_wrapper.py:84: RuntimeWarning: divide by zero encountered in divide
+  disp_map = 1/depth_map
+validation step 0; scene = ['scene0000_01_1']; context = [[4010, 4032]]
+[2024-10-10 16:18:44,833][py.warnings][WARNING] - /home/wang/lab/freesplat_github/src/model/encoder/common/gaussian_adapter.py:39: UserWarning: torch.range is deprecated and will be removed in a future release because its behavior is inconsistent with Python's range builtin. Instead, use torch.arange, which produces values in [start, end).
+  i_coords, j_coords = torch.meshgrid(torch.range(0,height-1), torch.range(0,width-1), indexing='ij')
+psnr: tensor(0., device='cuda:0') lpips: tensor(0., device='cuda:0') ssim: tensor(0., device='cuda:0') mask: tensor(0, device='cuda:0')
+[2024-10-10 16:18:44,978][py.warnings][WARNING] - /home/wang/lab/freesplat_github/src/model/model_wrapper.py:84: RuntimeWarning: divide by zero encountered in divide
+  disp_map = 1/depth_map
+[2024-10-10 16:18:45,758][py.warnings][WARNING] - /home/wang/lab/freesplat_github/src/model/model_wrapper.py:699: RuntimeWarning: invalid value encountered in scalar divide
+  line = line + f'{metric}=' + str((np.array(self.metrics[metric])*np.array(self.valids)).sum() / np.array(self.valids).sum()) + ' '
+psnr=nan lpips=nan ssim=nan
+--------------------data root: /home/wang/ssd/scannet/scannet_surn/scannet
+[2024-10-10 16:18:47,729][py.warnings][WARNING] - /home/wang/lab/freesplat_github/src/model/model_wrapper.py:308: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  f"psnr = {torch.mean(torch.tensor(psnr)):.2f}"
+train step 0; scene = ['scene0005_00']; context = [[741, 762]]; loss = 0.107316 psnr = 11.14 loss_mse = 0.077039 loss_lpips = 0.030277 gs_ratio = 0.929535
+train step 10; scene = ['scene0397_01']; context = [[878, 894]]; loss = 0.107671 psnr = 10.04 loss_mse = 0.078614 loss_lpips = 0.029057 gs_ratio = 0.804036
+train step 20; scene = ['scene0211_01']; context = [[194, 209]]; loss = 0.119076 psnr = 10.21 loss_mse = 0.089342 loss_lpips = 0.029735 gs_ratio = 0.570740
+train step 30; scene = ['scene0029_02']; context = [[519, 543]]; loss = 0.129001 psnr = 12.13 loss_mse = 0.099663 loss_lpips = 0.029338 gs_ratio = 0.903369
+train step 40; scene = ['scene0298_00']; context = [[670, 686]]; loss = 0.104808 psnr = 11.65 loss_mse = 0.075394 loss_lpips = 0.029415 gs_ratio = 0.847555
+train step 50; scene = ['scene0349_01']; context = [[1210, 1232]]; loss = 0.101931 psnr = 11.82 loss_mse = 0.071610 loss_lpips = 0.030321 gs_ratio = 0.587095
+train step 60; scene = ['scene0505_00']; context = [[1901, 1925]]; loss = 0.117996 psnr = 10.17 loss_mse = 0.088530 loss_lpips = 0.029466 gs_ratio = 0.802129
+train step 70; scene = ['scene0188_00']; context = [[931, 951]]; loss = 0.106238 psnr = 11.81 loss_mse = 0.078992 loss_lpips = 0.027245 gs_ratio = 0.892799
+train step 80; scene = ['scene0323_00']; context = [[197, 215]]; loss = 0.109463 psnr = 9.59 loss_mse = 0.083004 loss_lpips = 0.026459 gs_ratio = 0.628349
+train step 90; scene = ['scene0692_04']; context = [[252, 275]]; loss = 0.122233 psnr = 13.17 loss_mse = 0.092579 loss_lpips = 0.029654 gs_ratio = 0.610008
+train step 100; scene = ['scene0529_00']; context = [[896, 914]]; loss = 0.119744 psnr = 10.97 loss_mse = 0.091769 loss_lpips = 0.027975 gs_ratio = 0.655965
+train step 106; scene = ['scene0020_00']; context = [[100, 121]]; loss = 0.098932 psnr = 10.92 loss_mse = 0.069454 loss_lpips = 0.029478 gs_ratio = 0.938960
+train step 116; scene = ['scene0399_01']; context = [[1124, 1148]]; loss = 0.129875 psnr = 10.81 loss_mse = 0.097590 loss_lpips = 0.032285 gs_ratio = 0.922244
+train step 126; scene = ['scene0313_02']; context = [[267, 286]]; loss = 0.066923 psnr = 15.80 loss_mse = 0.039190 loss_lpips = 0.027733 gs_ratio = 0.768013
+train step 136; scene = ['scene0505_00']; context = [[3291, 3312]]; loss = 0.109547 psnr = 9.20 loss_mse = 0.078379 loss_lpips = 0.031169 gs_ratio = 0.840004
+train step 146; scene = ['scene0029_02']; context = [[959, 978]]; loss = 0.082323 psnr = 10.32 loss_mse = 0.052110 loss_lpips = 0.030212 gs_ratio = 0.717491
+train step 156; scene = ['scene0163_00']; context = [[1267, 1284]]; loss = 0.078983 psnr = 7.33 loss_mse = 0.049705 loss_lpips = 0.029278 gs_ratio = 0.775714
+train step 166; scene = ['scene0092_03']; context = [[2635, 2651]]; loss = 0.076387 psnr = 14.24 loss_mse = 0.047201 loss_lpips = 0.029186 gs_ratio = 0.952680
+train step 176; scene = ['scene0043_01']; context = [[353, 376]]; loss = 0.083312 psnr = 17.29 loss_mse = 0.053189 loss_lpips = 0.030122 gs_ratio = 0.778554
+train step 186; scene = ['scene0642_01']; context = [[1413, 1433]]; loss = 0.076298 psnr = 13.87 loss_mse = 0.047412 loss_lpips = 0.028886 gs_ratio = 0.811460
+train step 196; scene = ['scene0212_02']; context = [[1414, 1439]]; loss = 0.075700 psnr = 9.40 loss_mse = 0.047117 loss_lpips = 0.028583 gs_ratio = 0.898806
+train step 206; scene = ['scene0320_02']; context = [[2468, 2488]]; loss = 0.077471 psnr = 11.26 loss_mse = 0.047700 loss_lpips = 0.029772 gs_ratio = 0.977628
+train step 212; scene = ['scene0118_02']; context = [[363, 379]]; loss = 0.077443 psnr = 11.78 loss_mse = 0.051248 loss_lpips = 0.026195 gs_ratio = 0.917109
+train step 222; scene = ['scene0178_00']; context = [[1172, 1195]]; loss = 0.073650 psnr = 13.57 loss_mse = 0.046206 loss_lpips = 0.027444 gs_ratio = 0.782359
+train step 232; scene = ['scene0692_04']; context = [[456, 479]]; loss = 0.069107 psnr = 14.13 loss_mse = 0.040502 loss_lpips = 0.028605 gs_ratio = 0.970797
+train step 242; scene = ['scene0369_01']; context = [[934, 949]]; loss = 0.061458 psnr = 16.06 loss_mse = 0.032202 loss_lpips = 0.029255 gs_ratio = 0.875618
+train step 252; scene = ['scene0085_01']; context = [[669, 692]]; loss = 0.082765 psnr = 12.48 loss_mse = 0.054670 loss_lpips = 0.028095 gs_ratio = 0.887993
+train step 262; scene = ['scene0680_00']; context = [[450, 472]]; loss = 0.064575 psnr = 13.63 loss_mse = 0.037808 loss_lpips = 0.026768 gs_ratio = 0.771825
+train step 272; scene = ['scene0267_00']; context = [[662, 677]]; loss = 0.052914 psnr = 17.62 loss_mse = 0.025970 loss_lpips = 0.026944 gs_ratio = 0.526858
+train step 282; scene = ['scene0419_00']; context = [[3218, 3242]]; loss = 0.064662 psnr = 11.83 loss_mse = 0.039048 loss_lpips = 0.025614 gs_ratio = 0.709045
+train step 292; scene = ['scene0449_02']; context = [[701, 719]]; loss = 0.069474 psnr = 18.51 loss_mse = 0.043851 loss_lpips = 0.025623 gs_ratio = 0.725044
+train step 302; scene = ['scene0492_00']; context = [[216, 234]]; loss = 0.077823 psnr = 11.92 loss_mse = 0.051699 loss_lpips = 0.026124 gs_ratio = 0.812342
+train step 312; scene = ['scene0107_00']; context = [[996, 1020]]; loss = 0.074103 psnr = 16.68 loss_mse = 0.045500 loss_lpips = 0.028603 gs_ratio = 0.887171
+train step 318; scene = ['scene0108_00']; context = [[300, 324]]; loss = 0.058024 psnr = 16.04 loss_mse = 0.030192 loss_lpips = 0.027832 gs_ratio = 0.987656
+train step 328; scene = ['scene0313_02']; context = [[69, 91]]; loss = 0.062826 psnr = 15.07 loss_mse = 0.035182 loss_lpips = 0.027645 gs_ratio = 0.610003
+train step 338; scene = ['scene0212_02']; context = [[1052, 1073]]; loss = 0.069100 psnr = 15.65 loss_mse = 0.044550 loss_lpips = 0.024550 gs_ratio = 0.910965
+train step 348; scene = ['scene0293_01']; context = [[151, 175]]; loss = 0.053451 psnr = 16.88 loss_mse = 0.029334 loss_lpips = 0.024117 gs_ratio = 0.846708
+train step 358; scene = ['scene0055_01']; context = [[222, 247]]; loss = 0.060097 psnr = 15.89 loss_mse = 0.036052 loss_lpips = 0.024045 gs_ratio = 0.918378
+train step 368; scene = ['scene0586_00']; context = [[170, 192]]; loss = 0.056140 psnr = 14.32 loss_mse = 0.032568 loss_lpips = 0.023573 gs_ratio = 0.954758
+train step 378; scene = ['scene0677_01']; context = [[1114, 1135]]; loss = 0.047916 psnr = 16.02 loss_mse = 0.024353 loss_lpips = 0.023563 gs_ratio = 0.777631
+train step 388; scene = ['scene0163_00']; context = [[1116, 1139]]; loss = 0.068041 psnr = 13.46 loss_mse = 0.044206 loss_lpips = 0.023835 gs_ratio = 0.998248
+train step 398; scene = ['scene0451_02']; context = [[702, 719]]; loss = 0.050784 psnr = 16.34 loss_mse = 0.026842 loss_lpips = 0.023942 gs_ratio = 0.784528
+train step 408; scene = ['scene0029_02']; context = [[1624, 1644]]; loss = 0.044827 psnr = 15.18 loss_mse = 0.022644 loss_lpips = 0.022183 gs_ratio = 0.821859
+train step 418; scene = ['scene0320_02']; context = [[720, 736]]; loss = 0.061742 psnr = 15.07 loss_mse = 0.037701 loss_lpips = 0.024040 gs_ratio = 0.718343
+train step 424; scene = ['scene0408_00']; context = [[1190, 1213]]; loss = 0.049559 psnr = 14.41 loss_mse = 0.026905 loss_lpips = 0.022654 gs_ratio = 0.839376
+train step 434; scene = ['scene0692_04']; context = [[756, 774]]; loss = 0.044479 psnr = 16.17 loss_mse = 0.021605 loss_lpips = 0.022874 gs_ratio = 0.933784
+train step 444; scene = ['scene0178_00']; context = [[751, 774]]; loss = 0.051487 psnr = 17.88 loss_mse = 0.030533 loss_lpips = 0.020953 gs_ratio = 0.794950
+train step 454; scene = ['scene0182_01']; context = [[157, 182]]; loss = 0.043878 psnr = 16.54 loss_mse = 0.021945 loss_lpips = 0.021933 gs_ratio = 0.968717
+train step 464; scene = ['scene0323_00']; context = [[306, 321]]; loss = 0.047659 psnr = 12.31 loss_mse = 0.025570 loss_lpips = 0.022090 gs_ratio = 0.566587
+train step 474; scene = ['scene0293_01']; context = [[656, 675]]; loss = 0.046659 psnr = 17.49 loss_mse = 0.024761 loss_lpips = 0.021898 gs_ratio = 0.972771
+train step 484; scene = ['scene0548_02']; context = [[3628, 3645]]; loss = 0.051788 psnr = 14.97 loss_mse = 0.030644 loss_lpips = 0.021144 gs_ratio = 0.805524
+train step 494; scene = ['scene0564_00']; context = [[795, 813]]; loss = 0.047908 psnr = 19.15 loss_mse = 0.026540 loss_lpips = 0.021368 gs_ratio = 0.875287
+train step 504; scene = ['scene0449_02']; context = [[76, 94]]; loss = 0.056074 psnr = 17.00 loss_mse = 0.035136 loss_lpips = 0.020938 gs_ratio = 0.636581
+train step 514; scene = ['scene0108_00']; context = [[14, 33]]; loss = 0.056654 psnr = 13.41 loss_mse = 0.034788 loss_lpips = 0.021866 gs_ratio = 0.851603
+train step 524; scene = ['scene0214_01']; context = [[549, 566]]; loss = 0.055855 psnr = 16.53 loss_mse = 0.032187 loss_lpips = 0.023669 gs_ratio = 0.987356
+train step 530; scene = ['scene0332_00']; context = [[1672, 1693]]; loss = 0.040394 psnr = 20.08 loss_mse = 0.019103 loss_lpips = 0.021291 gs_ratio = 0.846146
+train step 540; scene = ['scene0297_00']; context = [[598, 615]]; loss = 0.046036 psnr = 18.88 loss_mse = 0.023853 loss_lpips = 0.022182 gs_ratio = 0.771843
+train step 550; scene = ['scene0281_00']; context = [[1151, 1166]]; loss = 0.041988 psnr = 19.08 loss_mse = 0.020456 loss_lpips = 0.021532 gs_ratio = 0.701314
+train step 560; scene = ['scene0067_01']; context = [[144, 160]]; loss = 0.042060 psnr = 18.01 loss_mse = 0.020852 loss_lpips = 0.021208 gs_ratio = 0.935173
+train step 570; scene = ['scene0536_01']; context = [[767, 789]]; loss = 0.041737 psnr = 15.18 loss_mse = 0.020866 loss_lpips = 0.020870 gs_ratio = 0.981633
+train step 580; scene = ['scene0303_01']; context = [[292, 311]]; loss = 0.034405 psnr = 21.93 loss_mse = 0.014202 loss_lpips = 0.020203 gs_ratio = 0.704732
+train step 590; scene = ['scene0287_00']; context = [[661, 682]]; loss = 0.043927 psnr = 17.26 loss_mse = 0.022002 loss_lpips = 0.021925 gs_ratio = 0.754171
+train step 600; scene = ['scene0408_00']; context = [[1420, 1436]]; loss = 0.046810 psnr = 17.89 loss_mse = 0.026854 loss_lpips = 0.019956 gs_ratio = 0.815394
+train step 610; scene = ['scene0501_01']; context = [[1811, 1826]]; loss = 0.034612 psnr = 21.48 loss_mse = 0.015870 loss_lpips = 0.018743 gs_ratio = 0.725960
+train step 620; scene = ['scene0642_01']; context = [[3618, 3642]]; loss = 0.053818 psnr = 14.41 loss_mse = 0.032436 loss_lpips = 0.021383 gs_ratio = 0.948804
+train step 630; scene = ['scene0586_00']; context = [[937, 955]]; loss = 0.034650 psnr = 18.86 loss_mse = 0.014590 loss_lpips = 0.020060 gs_ratio = 0.889333
+train step 636; scene = ['scene0350_01']; context = [[1289, 1312]]; loss = 0.047965 psnr = 18.83 loss_mse = 0.025911 loss_lpips = 0.022054 gs_ratio = 0.926819
+train step 646; scene = ['scene0410_01']; context = [[319, 339]]; loss = 0.036641 psnr = 18.33 loss_mse = 0.016827 loss_lpips = 0.019814 gs_ratio = 0.969487
+train step 656; scene = ['scene0429_00']; context = [[721, 740]]; loss = 0.038130 psnr = 17.66 loss_mse = 0.017850 loss_lpips = 0.020280 gs_ratio = 0.857669
+train step 666; scene = ['scene0163_00']; context = [[874, 889]]; loss = 0.033063 psnr = 16.24 loss_mse = 0.013808 loss_lpips = 0.019256 gs_ratio = 0.850520
+train step 676; scene = ['scene0525_00']; context = [[199, 221]]; loss = 0.043003 psnr = 15.83 loss_mse = 0.023247 loss_lpips = 0.019756 gs_ratio = 0.905101
+train step 686; scene = ['scene0468_02']; context = [[405, 426]]; loss = 0.043514 psnr = 18.15 loss_mse = 0.023575 loss_lpips = 0.019938 gs_ratio = 0.996536
+train step 696; scene = ['scene0286_01']; context = [[1102, 1120]]; loss = 0.041165 psnr = 17.99 loss_mse = 0.020278 loss_lpips = 0.020887 gs_ratio = 0.844231
+train step 706; scene = ['scene0267_00']; context = [[485, 500]]; loss = 0.038630 psnr = 17.16 loss_mse = 0.019551 loss_lpips = 0.019079 gs_ratio = 0.748817
+train step 716; scene = ['scene0380_01']; context = [[104, 119]]; loss = 0.044749 psnr = 21.60 loss_mse = 0.024502 loss_lpips = 0.020247 gs_ratio = 0.724472
+train step 726; scene = ['scene0408_00']; context = [[1763, 1783]]; loss = 0.042503 psnr = 12.73 loss_mse = 0.021753 loss_lpips = 0.020750 gs_ratio = 0.887299
+train step 736; scene = ['scene0293_01']; context = [[127, 150]]; loss = 0.042897 psnr = 14.09 loss_mse = 0.023241 loss_lpips = 0.019656 gs_ratio = 0.955256
+train step 742; scene = ['scene0029_02']; context = [[1030, 1047]]; loss = 0.034781 psnr = 19.79 loss_mse = 0.014625 loss_lpips = 0.020156 gs_ratio = 0.728411
+train step 752; scene = ['scene0059_01']; context = [[613, 628]]; loss = 0.032893 psnr = 18.27 loss_mse = 0.013496 loss_lpips = 0.019397 gs_ratio = 0.995422
+train step 762; scene = ['scene0236_00']; context = [[1571, 1595]]; loss = 0.032689 psnr = 19.21 loss_mse = 0.012820 loss_lpips = 0.019868 gs_ratio = 0.771202
+train step 772; scene = ['scene0444_01']; context = [[95, 119]]; loss = 0.041876 psnr = 15.56 loss_mse = 0.022603 loss_lpips = 0.019273 gs_ratio = 0.791392
+train step 782; scene = ['scene0323_00']; context = [[46, 65]]; loss = 0.036516 psnr = 17.27 loss_mse = 0.017807 loss_lpips = 0.018710 gs_ratio = 0.768244
+train step 792; scene = ['scene0268_01']; context = [[859, 882]]; loss = 0.039864 psnr = 14.15 loss_mse = 0.019498 loss_lpips = 0.020366 gs_ratio = 0.932353
+train step 802; scene = ['scene0332_00']; context = [[1329, 1346]]; loss = 0.033169 psnr = 20.48 loss_mse = 0.015172 loss_lpips = 0.017998 gs_ratio = 0.707659
+train step 812; scene = ['scene0181_00']; context = [[2169, 2187]]; loss = 0.034253 psnr = 18.69 loss_mse = 0.015078 loss_lpips = 0.019176 gs_ratio = 0.964205
+train step 822; scene = ['scene0182_01']; context = [[129, 152]]; loss = 0.031474 psnr = 19.95 loss_mse = 0.012748 loss_lpips = 0.018726 gs_ratio = 0.669001
+train step 832; scene = ['scene0043_01']; context = [[551, 573]]; loss = 0.034306 psnr = 21.02 loss_mse = 0.015984 loss_lpips = 0.018322 gs_ratio = 0.877706
+train step 842; scene = ['scene0531_00']; context = [[706, 730]]; loss = 0.032714 psnr = 15.68 loss_mse = 0.015294 loss_lpips = 0.017420 gs_ratio = 0.698540
+train step 848; scene = ['scene0029_02']; context = [[995, 1020]]; loss = 0.046689 psnr = 17.92 loss_mse = 0.027540 loss_lpips = 0.019149 gs_ratio = 0.805183
+train step 858; scene = ['scene0514_00']; context = [[733, 755]]; loss = 0.047676 psnr = 21.62 loss_mse = 0.028172 loss_lpips = 0.019504 gs_ratio = 0.999997
+train step 868; scene = ['scene0408_00']; context = [[1074, 1094]]; loss = 0.033390 psnr = 17.39 loss_mse = 0.014447 loss_lpips = 0.018943 gs_ratio = 0.999321
+train step 878; scene = ['scene0662_01']; context = [[2086, 2104]]; loss = 0.035764 psnr = 18.49 loss_mse = 0.016281 loss_lpips = 0.019483 gs_ratio = 0.753176
+train step 888; scene = ['scene0451_02']; context = [[396, 419]]; loss = 0.032703 psnr = 18.51 loss_mse = 0.015358 loss_lpips = 0.017345 gs_ratio = 0.955775
+train step 898; scene = ['scene0297_00']; context = [[584, 605]]; loss = 0.033702 psnr = 19.33 loss_mse = 0.014458 loss_lpips = 0.019244 gs_ratio = 0.735504
+train step 908; scene = ['scene0043_01']; context = [[936, 959]]; loss = 0.033972 psnr = 17.75 loss_mse = 0.015757 loss_lpips = 0.018214 gs_ratio = 0.922262
+train step 918; scene = ['scene0642_01']; context = [[1139, 1157]]; loss = 0.034606 psnr = 20.31 loss_mse = 0.016584 loss_lpips = 0.018022 gs_ratio = 0.795146
+train step 928; scene = ['scene0586_00']; context = [[328, 345]]; loss = 0.040479 psnr = 17.13 loss_mse = 0.020367 loss_lpips = 0.020112 gs_ratio = 0.959572
+train step 938; scene = ['scene0092_03']; context = [[968, 989]]; loss = 0.035838 psnr = 15.35 loss_mse = 0.017195 loss_lpips = 0.018643 gs_ratio = 0.812620
+train step 948; scene = ['scene0397_01']; context = [[204, 219]]; loss = 0.030488 psnr = 22.62 loss_mse = 0.012772 loss_lpips = 0.017715 gs_ratio = 0.753174
+train step 954; scene = ['scene0548_02']; context = [[1619, 1635]]; loss = 0.031747 psnr = 19.88 loss_mse = 0.013331 loss_lpips = 0.018416 gs_ratio = 0.773140
+train step 964; scene = ['scene0101_01']; context = [[877, 895]]; loss = 0.028357 psnr = 17.25 loss_mse = 0.010267 loss_lpips = 0.018090 gs_ratio = 0.955142
+train step 974; scene = ['scene0452_02']; context = [[1098, 1122]]; loss = 0.029663 psnr = 18.27 loss_mse = 0.012800 loss_lpips = 0.016863 gs_ratio = 0.810837
+train step 984; scene = ['scene0147_01']; context = [[200, 223]]; loss = 0.027664 psnr = 22.32 loss_mse = 0.010517 loss_lpips = 0.017147 gs_ratio = 0.831693
+train step 994; scene = ['scene0313_02']; context = [[497, 520]]; loss = 0.038606 psnr = 21.51 loss_mse = 0.020181 loss_lpips = 0.018425 gs_ratio = 0.877477
+train step 1004; scene = ['scene0029_02']; context = [[1791, 1811]]; loss = 0.033004 psnr = 23.00 loss_mse = 0.014720 loss_lpips = 0.018283 gs_ratio = 0.655586
+train step 1014; scene = ['scene0058_01']; context = [[648, 670]]; loss = 0.030445 psnr = 16.53 loss_mse = 0.012849 loss_lpips = 0.017596 gs_ratio = 0.958397
+train step 1024; scene = ['scene0380_01']; context = [[668, 691]]; loss = 0.034098 psnr = 17.46 loss_mse = 0.016481 loss_lpips = 0.017617 gs_ratio = 0.889203
+train step 1034; scene = ['scene0280_00']; context = [[400, 421]]; loss = 0.037348 psnr = 18.41 loss_mse = 0.020599 loss_lpips = 0.016749 gs_ratio = 0.965546
+train step 1044; scene = ['scene0659_00']; context = [[993, 1008]]; loss = 0.031974 psnr = 19.57 loss_mse = 0.012757 loss_lpips = 0.019217 gs_ratio = 0.647624
+train step 1054; scene = ['scene0108_00']; context = [[44, 69]]; loss = 0.030936 psnr = 17.49 loss_mse = 0.013014 loss_lpips = 0.017922 gs_ratio = 0.908587
+train step 1060; scene = ['scene0029_02']; context = [[1294, 1317]]; loss = 0.028717 psnr = 21.60 loss_mse = 0.012072 loss_lpips = 0.016645 gs_ratio = 0.750862
+train step 1070; scene = ['scene0281_00']; context = [[251, 274]]; loss = 0.034394 psnr = 20.24 loss_mse = 0.016597 loss_lpips = 0.017797 gs_ratio = 0.611280
+train step 1080; scene = ['scene0691_01']; context = [[930, 952]]; loss = 0.037801 psnr = 19.81 loss_mse = 0.018603 loss_lpips = 0.019197 gs_ratio = 0.931394
+train step 1090; scene = ['scene0676_01']; context = [[1258, 1278]]; loss = 0.028791 psnr = 23.39 loss_mse = 0.012291 loss_lpips = 0.016501 gs_ratio = 0.687309
+train step 1100; scene = ['scene0468_02']; context = [[478, 494]]; loss = 0.030004 psnr = 17.92 loss_mse = 0.012108 loss_lpips = 0.017896 gs_ratio = 0.739833
+train step 1110; scene = ['scene0280_00']; context = [[1091, 1114]]; loss = 0.034248 psnr = 15.77 loss_mse = 0.016017 loss_lpips = 0.018232 gs_ratio = 0.869158
+train step 1120; scene = ['scene0160_01']; context = [[125, 147]]; loss = 0.033728 psnr = 21.11 loss_mse = 0.016222 loss_lpips = 0.017506 gs_ratio = 0.951314
+train step 1130; scene = ['scene0223_00']; context = [[686, 710]]; loss = 0.033050 psnr = 19.20 loss_mse = 0.014197 loss_lpips = 0.018853 gs_ratio = 0.926099
+train step 1140; scene = ['scene0429_00']; context = [[368, 384]]; loss = 0.030614 psnr = 24.17 loss_mse = 0.013252 loss_lpips = 0.017362 gs_ratio = 0.651484
+train step 1150; scene = ['scene0597_00']; context = [[473, 491]]; loss = 0.028125 psnr = 20.33 loss_mse = 0.012261 loss_lpips = 0.015864 gs_ratio = 0.993785
+train step 1160; scene = ['scene0662_01']; context = [[51, 71]]; loss = 0.033116 psnr = 23.29 loss_mse = 0.015151 loss_lpips = 0.017966 gs_ratio = 0.630432
+train step 1166; scene = ['scene0586_00']; context = [[484, 504]]; loss = 0.025145 psnr = 18.81 loss_mse = 0.009388 loss_lpips = 0.015757 gs_ratio = 0.777008
+train step 1176; scene = ['scene0085_01']; context = [[950, 971]]; loss = 0.033243 psnr = 22.77 loss_mse = 0.014203 loss_lpips = 0.019040 gs_ratio = 0.756429
+train step 1186; scene = ['scene0514_00']; context = [[1039, 1064]]; loss = 0.032728 psnr = 19.97 loss_mse = 0.015031 loss_lpips = 0.017697 gs_ratio = 0.773318
+train step 1196; scene = ['scene0323_00']; context = [[210, 228]]; loss = 0.032570 psnr = 19.76 loss_mse = 0.014992 loss_lpips = 0.017578 gs_ratio = 0.571579
+train step 1206; scene = ['scene0350_01']; context = [[666, 682]]; loss = 0.032395 psnr = 21.15 loss_mse = 0.015146 loss_lpips = 0.017250 gs_ratio = 0.704595
+train step 1216; scene = ['scene0348_01']; context = [[680, 702]]; loss = 0.027384 psnr = 18.05 loss_mse = 0.011225 loss_lpips = 0.016159 gs_ratio = 0.776428
+train step 1226; scene = ['scene0292_00']; context = [[783, 808]]; loss = 0.030738 psnr = 13.70 loss_mse = 0.014152 loss_lpips = 0.016586 gs_ratio = 0.999143
+train step 1236; scene = ['scene0659_00']; context = [[652, 667]]; loss = 0.029224 psnr = 20.84 loss_mse = 0.012033 loss_lpips = 0.017191 gs_ratio = 0.569867
+train step 1246; scene = ['scene0101_01']; context = [[201, 216]]; loss = 0.030493 psnr = 17.89 loss_mse = 0.012703 loss_lpips = 0.017791 gs_ratio = 0.883235
+train step 1256; scene = ['scene0691_01']; context = [[528, 551]]; loss = 0.033836 psnr = 22.06 loss_mse = 0.016151 loss_lpips = 0.017685 gs_ratio = 0.895678
+train step 1266; scene = ['scene0444_01']; context = [[24, 45]]; loss = 0.027775 psnr = 15.97 loss_mse = 0.011210 loss_lpips = 0.016566 gs_ratio = 0.860781
+train step 1272; scene = ['scene0677_01']; context = [[1037, 1060]]; loss = 0.032954 psnr = 20.77 loss_mse = 0.015110 loss_lpips = 0.017844 gs_ratio = 0.859360
+train step 1282; scene = ['scene0101_01']; context = [[1538, 1555]]; loss = 0.031031 psnr = 18.06 loss_mse = 0.013639 loss_lpips = 0.017393 gs_ratio = 0.841164
+train step 1292; scene = ['scene0214_01']; context = [[896, 920]]; loss = 0.029821 psnr = 19.59 loss_mse = 0.013143 loss_lpips = 0.016678 gs_ratio = 0.836489
+train step 1302; scene = ['scene0369_01']; context = [[670, 691]]; loss = 0.029535 psnr = 19.90 loss_mse = 0.012561 loss_lpips = 0.016975 gs_ratio = 0.833870
+train step 1312; scene = ['scene0297_00']; context = [[807, 823]]; loss = 0.026013 psnr = 23.17 loss_mse = 0.009662 loss_lpips = 0.016351 gs_ratio = 0.851077
+train step 1322; scene = ['scene0365_01']; context = [[1359, 1384]]; loss = 0.032481 psnr = 19.27 loss_mse = 0.014488 loss_lpips = 0.017993 gs_ratio = 0.810748
+train step 1332; scene = ['scene0347_01']; context = [[733, 755]]; loss = 0.026505 psnr = 19.61 loss_mse = 0.010073 loss_lpips = 0.016431 gs_ratio = 0.807040
+train step 1342; scene = ['scene0376_00']; context = [[563, 582]]; loss = 0.031036 psnr = 21.19 loss_mse = 0.014276 loss_lpips = 0.016759 gs_ratio = 0.798192
+train step 1352; scene = ['scene0163_00']; context = [[1046, 1063]]; loss = 0.023526 psnr = 17.49 loss_mse = 0.008789 loss_lpips = 0.014738 gs_ratio = 0.999830
+train step 1362; scene = ['scene0156_00']; context = [[523, 544]]; loss = 0.029893 psnr = 17.76 loss_mse = 0.012144 loss_lpips = 0.017749 gs_ratio = 0.999420
+train step 1372; scene = ['scene0408_00']; context = [[934, 958]]; loss = 0.037227 psnr = 18.38 loss_mse = 0.018898 loss_lpips = 0.018329 gs_ratio = 0.924922
+train step 1378; scene = ['scene0677_01']; context = [[1541, 1557]]; loss = 0.024156 psnr = 22.29 loss_mse = 0.008552 loss_lpips = 0.015604 gs_ratio = 0.841805
+train step 1388; scene = ['scene0586_00']; context = [[806, 822]]; loss = 0.026555 psnr = 24.13 loss_mse = 0.011135 loss_lpips = 0.015420 gs_ratio = 0.830490
+train step 1398; scene = ['scene0020_00']; context = [[1093, 1114]]; loss = 0.034114 psnr = 18.08 loss_mse = 0.016248 loss_lpips = 0.017866 gs_ratio = 0.945679
+[2024-10-10 16:28:53,582][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/pytorch_lightning/trainer/call.py:54: Detected KeyboardInterrupt, attempting graceful shutdown...

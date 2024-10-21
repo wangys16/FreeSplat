@@ -1,0 +1,100 @@
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+You are using a CUDA device ('NVIDIA GeForce RTX 4090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Restoring states from the checkpoint path at checkpoints/fvt.ckpt
+Error executing job with overrides: ['+experiment=fvt', 'checkpointing.load=checkpoints/fvt.ckpt', '+output_dir=test_fvt_2', 'mode=test', 'dataset/view_sampler=evaluation', 'dataset.view_sampler.num_context_views=2']
+Traceback (most recent call last):
+  File "/home/wang/lab/freesplat_github/src/main.py", line 143, in train
+    trainer.test(
+  File "/home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 754, in test
+    return call._call_and_handle_interrupt(
+  File "/home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/pytorch_lightning/trainer/call.py", line 44, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 794, in _test_impl
+    results = self._run(model, ckpt_path=ckpt_path)
+  File "/home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 956, in _run
+    self._checkpoint_connector._restore_modules_and_callbacks(ckpt_path)
+  File "/home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/pytorch_lightning/trainer/connectors/checkpoint_connector.py", line 397, in _restore_modules_and_callbacks
+    self.resume_start(checkpoint_path)
+  File "/home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/pytorch_lightning/trainer/connectors/checkpoint_connector.py", line 79, in resume_start
+    loaded_checkpoint = self.trainer.strategy.load_checkpoint(checkpoint_path)
+  File "/home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/pytorch_lightning/strategies/strategy.py", line 368, in load_checkpoint
+    return self.checkpoint_io.load_checkpoint(checkpoint_path)
+  File "/home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/lightning_fabric/plugins/io/torch_io.py", line 81, in load_checkpoint
+    raise FileNotFoundError(f"Checkpoint file not found: {path}")
+FileNotFoundError: Checkpoint file not found: checkpoints/fvt.ckpt
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.
+[2024-10-09 19:29:31,662][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:204: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python /home/wang/lab/freesplat_github/src/main.py +experim ...
+[2024-10-09 19:29:31,693][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/timm/models/_factory.py:117: UserWarning: Mapping deprecated model name tf_efficientnetv2_s_in21ft1k to current tf_efficientnetv2_s.in21k_ft_in1k.
+  model = create_fn(
+[2024-10-09 19:29:31,874][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/tf_efficientnetv2_s.in21k_ft_in1k)
+[2024-10-09 19:29:32,125][timm.models._hub][INFO] - [timm/tf_efficientnetv2_s.in21k_ft_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+################################################################################
+########################## Using FeatureVolumeManager ##########################
+ Number of source views:      4
+ Using all metadata.
+ Number of channels:          [49, 32, 32, 1]
+################################################################################
+Setting up [LPIPS] perceptual loss: trunk [vgg], v[0.1], spatial [off]
+[2024-10-09 19:29:32,360][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+[2024-10-09 19:29:32,360][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=VGG16_Weights.IMAGENET1K_V1`. You can also use `weights=VGG16_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Loading model from: /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/lpips/weights/v0.1/vgg.pth
+dataset:
+    view_sampler: {'name': 'evaluation', 'index_path': 'assets/evaluation_index_scannet.json', 'num_context_views': 2, 'random': True}
+    name: scannet
+    roots: ['/home/wang/ssd/scannet/scannet_surn/scannet']
+    make_baseline_1: False
+    augment: True
+    image_shape: [384, 512]
+    background_color: [0.0, 0.0, 0.0]
+    cameras_are_circular: False
+    baseline_epsilon: 0.001
+    max_fov: 100.0
+    use_depth: True
+    overfit_to_scene: None
+    near: 0.5
+    far: 15.0
+model:
+    encoder: {'backbone': {'name': 'efficientnet', 'model': 'efficientnet', 'd_out': 512, 'resnet_name': 'resunet'}, 'name': 'epipolar', 'opacity_mapping': {'initial': 0.0, 'final': 0.0, 'warm_up': 1}, 'num_monocular_samples': 32, 'num_surfaces': 1, 'predict_opacity': False, 'near_disparity': 3.0, 'gaussians_per_pixel': 3, 'gaussian_adapter': {'gaussian_scale_min': 0.5, 'gaussian_scale_max': 15.0, 'sh_degree': 2, 'depth_sup': True}, 'd_feature': 128, 'epipolar_transformer': {'self_attention': {'patch_size': 4, 'num_octaves': 10, 'num_layers': 2, 'num_heads': 4, 'd_token': 128, 'd_dot': 128, 'd_mlp': 256}, 'num_octaves': 10, 'num_layers': 2, 'num_heads': 4, 'num_samples': 32, 'd_dot': 128, 'd_mlp': 256, 'downscale': 4}, 'visualizer': {'num_samples': 8, 'min_resolution': 256, 'export_ply': False}, 'apply_bounds_shim': True, 'use_epipolar_transformer': False, 'use_transmittance': False, 'use_depth': False, 'est_depth': 'cost', 'unimatch_weights_path': 'checkpoints/gmdepth-scale1-resumeflowthings-scannet-5d9d7964.pth', 'multiview_trans_attn_split': 2, 'costvolume_unet_feat_dim': 128, 'costvolume_unet_channel_mult': [1, 1, 1], 'costvolume_unet_attn_res': [], 'depth_unet_feat_dim': 64, 'depth_unet_attn_res': [], 'depth_unet_channel_mult': [1, 1, 1], 'downscale_factor': 4, 'shim_patch_size': 4, 'wo_depth_refine': False, 'wo_cost_volume': False, 'wo_backbone_cross_attn': False, 'wo_cost_volume_refine': False, 'use_epipolar_trans': False, 'n_levels': -1, 'num_views': 5, 'fusion': True, 'num_depth_candidates': 128}
+    decoder: {'name': 'splatting_cuda'}
+loss:
+    mse: {'weight': 1.0}
+    lpips: {'weight': 0.05, 'apply_after_step': 0}
+output_dir: test_fvt_2
+wandb:
+    project: pixelsplat
+    entity: wangys10272910
+    name: scannet
+    mode: offline
+    tags: ['scannet', '384x512']
+mode: test
+data_loader:
+    train: {'num_workers': 16, 'persistent_workers': True, 'batch_size': 1, 'seed': 1234}
+    test: {'num_workers': 4, 'persistent_workers': False, 'batch_size': 1, 'seed': 2345}
+    val: {'num_workers': 1, 'persistent_workers': True, 'batch_size': 1, 'seed': 3456}
+optimizer:
+    lr: 0.0001
+    warm_up_steps: 100
+    cosine_lr: True
+checkpointing:
+    load: checkpoints/fvt.ckpt
+    every_n_train_steps: 10000
+    save_top_k: -1
+train:
+    use_depth: None
+    depth_mode: depth
+    extended_visualization: False
+    depth_sup: True
+test:
+    output_path: outputs/test
+seed: 111123
+strict: True
+trainer:
+    max_steps: 300001
+    val_check_interval: 5000
+    gradient_clip_val: 0.01
+    prog_bar: True

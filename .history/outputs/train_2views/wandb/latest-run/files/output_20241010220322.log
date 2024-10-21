@@ -1,0 +1,120 @@
+[2024-10-10 21:32:49,951][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:204: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python /home/wang/lab/freesplat_github/src/main.py +experim ...
+[2024-10-10 21:32:49,984][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/timm/models/_factory.py:117: UserWarning: Mapping deprecated model name tf_efficientnetv2_s_in21ft1k to current tf_efficientnetv2_s.in21k_ft_in1k.
+  model = create_fn(
+[2024-10-10 21:32:50,355][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/tf_efficientnetv2_s.in21k_ft_in1k)
+[2024-10-10 21:32:50,615][timm.models._hub][INFO] - [timm/tf_efficientnetv2_s.in21k_ft_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+Setting up [LPIPS] perceptual loss: trunk [vgg], v[0.1], spatial [off]
+[2024-10-10 21:32:50,851][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+[2024-10-10 21:32:50,851][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=VGG16_Weights.IMAGENET1K_V1`. You can also use `weights=VGG16_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+Loading model from: /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/lpips/weights/v0.1/vgg.pth
+dataset:
+    view_sampler: {'name': 'evaluation', 'index_path': 'assets/evaluation_index_scannet.json', 'num_context_views': 2}
+    name: scannet
+    roots: ['/home/wang/ssd/scannet/scannet_surn/scannet']
+    make_baseline_1: False
+    augment: True
+    image_shape: [384, 512]
+    background_color: [0.0, 0.0, 0.0]
+    cameras_are_circular: False
+    baseline_epsilon: 0.001
+    max_fov: 100.0
+    load_depth: True
+    overfit_to_scene: None
+    near: 0.5
+    far: 15.0
+model:
+    encoder: {'backbone': {'name': 'efficientnet', 'model': 'efficientnet', 'd_out': 512}, 'name': 'freesplat', 'opacity_mapping': {'initial': 0.0, 'final': 0.0, 'warm_up': 1}, 'num_monocular_samples': 32, 'num_surfaces': 1, 'predict_opacity': False, 'near_disparity': 3.0, 'gaussians_per_pixel': 3, 'gaussian_adapter': {'gaussian_scale_min': 0.5, 'gaussian_scale_max': 15.0, 'sh_degree': 2, 'depth_sup': True}, 'd_feature': 128, 'epipolar_transformer': {'self_attention': {'patch_size': 4, 'num_octaves': 10, 'num_layers': 2, 'num_heads': 4, 'd_token': 128, 'd_dot': 128, 'd_mlp': 256}, 'num_octaves': 10, 'num_layers': 2, 'num_heads': 4, 'num_samples': 32, 'd_dot': 128, 'd_mlp': 256, 'downscale': 4}, 'visualizer': {'num_samples': 8, 'min_resolution': 256, 'export_ply': False}, 'apply_bounds_shim': False, 'use_epipolar_transformer': False, 'use_transmittance': False, 'load_depth': False, 'est_depth': 'cost', 'unimatch_weights_path': 'checkpoints/gmdepth-scale1-resumeflowthings-scannet-5d9d7964.pth', 'multiview_trans_attn_split': 2, 'costvolume_unet_feat_dim': 128, 'costvolume_unet_channel_mult': [1, 1, 1], 'costvolume_unet_attn_res': [], 'depth_unet_feat_dim': 64, 'depth_unet_attn_res': [], 'depth_unet_channel_mult': [1, 1, 1], 'downscale_factor': 4, 'shim_patch_size': 4, 'wo_depth_refine': False, 'wo_cost_volume': False, 'wo_backbone_cross_attn': False, 'wo_cost_volume_refine': False, 'use_epipolar_trans': False, 'num_views': 2, 'num_depth_candidates': 128}
+    decoder: {'name': 'splatting_cuda'}
+loss:
+    mse: {'weight': 1.0}
+    lpips: {'weight': 0.05, 'apply_after_step': 0}
+output_dir: train_2views
+wandb:
+    project: pixelsplat
+    entity: wangys10272910
+    name: scannet
+    mode: offline
+    tags: ['scannet', '384x512']
+mode: test
+data_loader:
+    train: {'num_workers': 16, 'persistent_workers': True, 'batch_size': 1, 'seed': 1234}
+    test: {'num_workers': 4, 'persistent_workers': False, 'batch_size': 1, 'seed': 2345}
+    val: {'num_workers': 1, 'persistent_workers': True, 'batch_size': 1, 'seed': 3456}
+optimizer:
+    lr: 0.0001
+    warm_up_steps: 100
+    cosine_lr: True
+checkpointing:
+    load: None
+    every_n_train_steps: 10000
+    save_top_k: -1
+train:
+    load_depth: None
+    depth_mode: depth
+    extended_visualization: False
+    depth_sup: True
+test:
+    output_path: outputs/test
+seed: 111123
+strict: True
+trainer:
+    max_steps: 300001
+    val_check_interval: 5000
+    gradient_clip_val: 0.01
+    prog_bar: True
+index_path: assets/evaluation_index_scannet.json
+--------------------data root: /home/wang/ssd/scannet/scannet_surn/scannet
+Test step 000000.
+[2024-10-10 21:32:53,341][py.warnings][WARNING] - /home/wang/lab/freesplat_github/src/model/encoder/common/gaussian_adapter.py:39: UserWarning: torch.range is deprecated and will be removed in a future release because its behavior is inconsistent with Python's range builtin. Instead, use torch.arange, which produces values in [start, end).
+  i_coords, j_coords = torch.meshgrid(torch.range(0,height-1), torch.range(0,width-1), indexing='ij')
+processing scene0000_01_0
+abs_diff: 0.792483925819397, rel_diff: 0.5018206238746643, delta_25: 0.364916056394577
+[2024-10-10 21:32:53,609][py.warnings][WARNING] - /home/wang/lab/freesplat_github/src/model/model_wrapper.py:84: RuntimeWarning: divide by zero encountered in divide
+  disp_map = 1/depth_map
+You are using a CUDA device ('NVIDIA GeForce RTX 4090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Setting up [LPIPS] perceptual loss: trunk [vgg], v[0.1], spatial [off]
+Loading model from: /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/lpips/weights/v0.1/vgg.pth
+psnr: tensor(11.4897, device='cuda:0') lpips: tensor(0.7677, device='cuda:0') ssim: tensor(0.5511, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0000_01_1
+abs_diff: 0.9664561152458191, rel_diff: 0.667843222618103, delta_25: 0.18063777685165405
+psnr: tensor(11.6808, device='cuda:0') lpips: tensor(0.8177, device='cuda:0') ssim: tensor(0.5115, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0000_01_2
+abs_diff: 1.2029812335968018, rel_diff: 0.7992706298828125, delta_25: 0.08977700769901276
+psnr: tensor(10.9725, device='cuda:0') lpips: tensor(0.8829, device='cuda:0') ssim: tensor(0.4744, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0000_01_3
+abs_diff: 0.34931322932243347, rel_diff: 0.15941396355628967, delta_25: 0.7800488471984863
+psnr: tensor(14.1079, device='cuda:0') lpips: tensor(0.7986, device='cuda:0') ssim: tensor(0.6325, device='cuda:0') mask: tensor(1, device='cuda:0')
+processing scene0000_01_4
+abs_diff: 0.7874565124511719, rel_diff: 0.38618117570877075, delta_25: 0.2220660150051117
+psnr: tensor(12.3955, device='cuda:0') lpips: tensor(0.8108, device='cuda:0') ssim: tensor(0.5834, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0000_01_5
+abs_diff: 1.5898640155792236, rel_diff: 1.5348995923995972, delta_25: 0.0005409670993685722
+psnr: tensor(12.4627, device='cuda:0') lpips: tensor(0.8564, device='cuda:0') ssim: tensor(0.5757, device='cuda:0') mask: tensor(2, device='cuda:0')
+processing scene0000_01_6
+abs_diff: 0.796657919883728, rel_diff: 0.4402425289154053, delta_25: 0.34329673647880554
+psnr: tensor(11.7039, device='cuda:0') lpips: tensor(0.8459, device='cuda:0') ssim: tensor(0.4849, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0000_01_7
+abs_diff: 0.5619508624076843, rel_diff: 0.3084699511528015, delta_25: 0.5528641939163208
+psnr: tensor(14.0647, device='cuda:0') lpips: tensor(0.7808, device='cuda:0') ssim: tensor(0.6297, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0000_01_8
+abs_diff: 0.3812180161476135, rel_diff: 0.1672675609588623, delta_25: 0.8128732442855835
+psnr: tensor(12.1356, device='cuda:0') lpips: tensor(0.8193, device='cuda:0') ssim: tensor(0.5898, device='cuda:0') mask: tensor(2, device='cuda:0')
+processing scene0000_01_9
+abs_diff: 0.4263937473297119, rel_diff: 0.2339673638343811, delta_25: 0.6346808671951294
+psnr: tensor(13.3285, device='cuda:0') lpips: tensor(0.8339, device='cuda:0') ssim: tensor(0.5544, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0079_00_0
+abs_diff: 0.7054715156555176, rel_diff: 0.40800201892852783, delta_25: 0.34338730573654175
+psnr: tensor(11.3433, device='cuda:0') lpips: tensor(0.8356, device='cuda:0') ssim: tensor(0.4626, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0079_00_1
+abs_diff: 0.7044612169265747, rel_diff: 0.4103613793849945, delta_25: 0.34240612387657166
+psnr: tensor(11.2304, device='cuda:0') lpips: tensor(0.8315, device='cuda:0') ssim: tensor(0.4472, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0079_00_2
+abs_diff: 0.6771072149276733, rel_diff: 0.374436616897583, delta_25: 0.3678901195526123
+[2024-10-10 21:33:01,243][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/pytorch_lightning/trainer/call.py:54: Detected KeyboardInterrupt, attempting graceful shutdown...

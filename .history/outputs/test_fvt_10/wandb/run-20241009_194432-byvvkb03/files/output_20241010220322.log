@@ -1,0 +1,492 @@
+[2024-10-09 19:44:38,683][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:204: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python /home/wang/lab/freesplat_github/src/main.py +experim ...
+[2024-10-09 19:44:38,714][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/timm/models/_factory.py:117: UserWarning: Mapping deprecated model name tf_efficientnetv2_s_in21ft1k to current tf_efficientnetv2_s.in21k_ft_in1k.
+  model = create_fn(
+[2024-10-09 19:44:38,895][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/tf_efficientnetv2_s.in21k_ft_in1k)
+[2024-10-09 19:44:39,422][timm.models._hub][INFO] - [timm/tf_efficientnetv2_s.in21k_ft_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+################################################################################
+########################## Using FeatureVolumeManager ##########################
+ Number of source views:      4
+ Using all metadata.
+ Number of channels:          [49, 32, 32, 1]
+################################################################################
+Setting up [LPIPS] perceptual loss: trunk [vgg], v[0.1], spatial [off]
+[2024-10-09 19:44:39,653][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+[2024-10-09 19:44:39,653][py.warnings][WARNING] - /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=VGG16_Weights.IMAGENET1K_V1`. You can also use `weights=VGG16_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+You are using a CUDA device ('NVIDIA GeForce RTX 4090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Restoring states from the checkpoint path at checkpoints/fvt.ckpt
+Loading model from: /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/lpips/weights/v0.1/vgg.pth
+dataset:
+    view_sampler: {'name': 'evaluation', 'index_path': 'assets/evaluation_index_scannet.json', 'num_context_views': 10, 'random': True}
+    name: scannet
+    roots: ['/home/wang/ssd/scannet/scannet_surn/scannet']
+    make_baseline_1: False
+    augment: True
+    image_shape: [384, 512]
+    background_color: [0.0, 0.0, 0.0]
+    cameras_are_circular: False
+    baseline_epsilon: 0.001
+    max_fov: 100.0
+    load_depth: True
+    overfit_to_scene: None
+    near: 0.5
+    far: 15.0
+model:
+    encoder: {'backbone': {'name': 'efficientnet', 'model': 'efficientnet', 'd_out': 512, 'resnet_name': 'resunet'}, 'name': 'epipolar', 'opacity_mapping': {'initial': 0.0, 'final': 0.0, 'warm_up': 1}, 'num_monocular_samples': 32, 'num_surfaces': 1, 'predict_opacity': False, 'near_disparity': 3.0, 'gaussians_per_pixel': 3, 'gaussian_adapter': {'gaussian_scale_min': 0.5, 'gaussian_scale_max': 15.0, 'sh_degree': 2, 'depth_sup': True}, 'd_feature': 128, 'epipolar_transformer': {'self_attention': {'patch_size': 4, 'num_octaves': 10, 'num_layers': 2, 'num_heads': 4, 'd_token': 128, 'd_dot': 128, 'd_mlp': 256}, 'num_octaves': 10, 'num_layers': 2, 'num_heads': 4, 'num_samples': 32, 'd_dot': 128, 'd_mlp': 256, 'downscale': 4}, 'visualizer': {'num_samples': 8, 'min_resolution': 256, 'export_ply': False}, 'apply_bounds_shim': True, 'use_epipolar_transformer': False, 'use_transmittance': False, 'load_depth': False, 'est_depth': 'cost', 'unimatch_weights_path': 'checkpoints/gmdepth-scale1-resumeflowthings-scannet-5d9d7964.pth', 'multiview_trans_attn_split': 2, 'costvolume_unet_feat_dim': 128, 'costvolume_unet_channel_mult': [1, 1, 1], 'costvolume_unet_attn_res': [], 'depth_unet_feat_dim': 64, 'depth_unet_attn_res': [], 'depth_unet_channel_mult': [1, 1, 1], 'downscale_factor': 4, 'shim_patch_size': 4, 'wo_depth_refine': False, 'wo_cost_volume': False, 'wo_backbone_cross_attn': False, 'wo_cost_volume_refine': False, 'use_epipolar_trans': False, 'n_levels': -1, 'num_views': 5, 'fusion': True, 'num_depth_candidates': 128}
+    decoder: {'name': 'splatting_cuda'}
+loss:
+    mse: {'weight': 1.0}
+    lpips: {'weight': 0.05, 'apply_after_step': 0}
+output_dir: test_fvt_10
+wandb:
+    project: pixelsplat
+    entity: wangys10272910
+    name: scannet
+    mode: offline
+    tags: ['scannet', '384x512']
+mode: test
+data_loader:
+    train: {'num_workers': 16, 'persistent_workers': True, 'batch_size': 1, 'seed': 1234}
+    test: {'num_workers': 4, 'persistent_workers': False, 'batch_size': 1, 'seed': 2345}
+    val: {'num_workers': 1, 'persistent_workers': True, 'batch_size': 1, 'seed': 3456}
+optimizer:
+    lr: 0.0001
+    warm_up_steps: 100
+    cosine_lr: True
+checkpointing:
+    load: checkpoints/fvt.ckpt
+    every_n_train_steps: 10000
+    save_top_k: -1
+train:
+    load_depth: None
+    depth_mode: depth
+    extended_visualization: False
+    depth_sup: True
+test:
+    output_path: outputs/test
+seed: 111123
+strict: True
+trainer:
+    max_steps: 300001
+    val_check_interval: 5000
+    gradient_clip_val: 0.01
+    prog_bar: True
++++++++++++++++++++++index_path: assets/evaluation_index_scannet.json
+--------------------data root: /home/wang/ssd/scannet/scannet_surn/scannet
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Loaded model weights from the checkpoint at checkpoints/fvt.ckpt
+Test step 000000.
+[2024-10-09 19:44:44,772][py.warnings][WARNING] - /home/wang/lab/freesplat_github/src/model/encoder/common/gaussian_adapter.py:39: UserWarning: torch.range is deprecated and will be removed in a future release because its behavior is inconsistent with Python's range builtin. Instead, use torch.arange, which produces values in [start, end).
+  i_coords, j_coords = torch.meshgrid(torch.range(0,height-1), torch.range(0,width-1), indexing='ij')
+processing scene0000_01_0
+abs_diff: 0.1316436380147934, rel_diff: 0.06778514385223389, delta_25: 0.96015864610672
+[2024-10-09 19:44:46,238][py.warnings][WARNING] - /home/wang/lab/freesplat_github/src/model/model_wrapper.py:84: RuntimeWarning: divide by zero encountered in divide
+  disp_map = 1/depth_map
+Setting up [LPIPS] perceptual loss: trunk [vgg], v[0.1], spatial [off]
+Loading model from: /home/wang/anaconda3/envs/ps/lib/python3.10/site-packages/lpips/weights/v0.1/vgg.pth
+psnr: tensor(27.7717, device='cuda:0') lpips: tensor(0.2561, device='cuda:0') ssim: tensor(0.7960, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(26.2940, device='cuda:0') lpips: tensor(0.2646, device='cuda:0') ssim: tensor(0.7890, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0000_01_1
+abs_diff: 0.1642879992723465, rel_diff: 0.08661938458681107, delta_25: 0.9454905390739441
+psnr: tensor(27.9182, device='cuda:0') lpips: tensor(0.2475, device='cuda:0') ssim: tensor(0.8032, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(27.1209, device='cuda:0') lpips: tensor(0.2464, device='cuda:0') ssim: tensor(0.7983, device='cuda:0') mask: tensor(2, device='cuda:0')
+processing scene0000_01_2
+abs_diff: 0.19951556622982025, rel_diff: 0.0922950953245163, delta_25: 0.9148241877555847
+psnr: tensor(23.6830, device='cuda:0') lpips: tensor(0.3297, device='cuda:0') ssim: tensor(0.7532, device='cuda:0') mask: tensor(6, device='cuda:0')
+psnr: tensor(21.6713, device='cuda:0') lpips: tensor(0.3740, device='cuda:0') ssim: tensor(0.6702, device='cuda:0') mask: tensor(1, device='cuda:0')
+processing scene0000_01_3
+abs_diff: 0.12954218685626984, rel_diff: 0.07022334635257721, delta_25: 0.9436999559402466
+psnr: tensor(26.9538, device='cuda:0') lpips: tensor(0.2569, device='cuda:0') ssim: tensor(0.7937, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(27.9984, device='cuda:0') lpips: tensor(0.2853, device='cuda:0') ssim: tensor(0.8159, device='cuda:0') mask: tensor(2, device='cuda:0')
+processing scene0000_01_4
+abs_diff: 0.17721329629421234, rel_diff: 0.09472199529409409, delta_25: 0.8989332318305969
+psnr: tensor(26.0896, device='cuda:0') lpips: tensor(0.2659, device='cuda:0') ssim: tensor(0.7798, device='cuda:0') mask: tensor(6, device='cuda:0')
+psnr: tensor(26.6346, device='cuda:0') lpips: tensor(0.2752, device='cuda:0') ssim: tensor(0.7700, device='cuda:0') mask: tensor(2, device='cuda:0')
+processing scene0000_01_5
+abs_diff: 0.13335160911083221, rel_diff: 0.06783757358789444, delta_25: 0.9564496278762817
+psnr: tensor(25.0124, device='cuda:0') lpips: tensor(0.2804, device='cuda:0') ssim: tensor(0.7749, device='cuda:0') mask: tensor(9, device='cuda:0')
+psnr: tensor(23.5121, device='cuda:0') lpips: tensor(0.3305, device='cuda:0') ssim: tensor(0.7197, device='cuda:0') mask: tensor(2, device='cuda:0')
+processing scene0000_01_6
+abs_diff: 0.16105683147907257, rel_diff: 0.08066049218177795, delta_25: 0.9370487332344055
+psnr: tensor(23.3557, device='cuda:0') lpips: tensor(0.3132, device='cuda:0') ssim: tensor(0.7512, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(22.0444, device='cuda:0') lpips: tensor(0.3426, device='cuda:0') ssim: tensor(0.7263, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0000_01_7
+abs_diff: 0.1741134077310562, rel_diff: 0.07536739856004715, delta_25: 0.91965252161026
+psnr: tensor(24.5411, device='cuda:0') lpips: tensor(0.2768, device='cuda:0') ssim: tensor(0.7481, device='cuda:0') mask: tensor(6, device='cuda:0')
+psnr: tensor(23.9792, device='cuda:0') lpips: tensor(0.2871, device='cuda:0') ssim: tensor(0.7587, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0000_01_8
+abs_diff: 0.14160384237766266, rel_diff: 0.06550440937280655, delta_25: 0.9506276249885559
+psnr: tensor(25.5059, device='cuda:0') lpips: tensor(0.2716, device='cuda:0') ssim: tensor(0.7671, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(24.1008, device='cuda:0') lpips: tensor(0.2735, device='cuda:0') ssim: tensor(0.7365, device='cuda:0') mask: tensor(7, device='cuda:0')
+processing scene0000_01_9
+abs_diff: 0.1441594511270523, rel_diff: 0.07456939667463303, delta_25: 0.9548605680465698
+psnr: tensor(27.7882, device='cuda:0') lpips: tensor(0.2551, device='cuda:0') ssim: tensor(0.7959, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(25.4653, device='cuda:0') lpips: tensor(0.3103, device='cuda:0') ssim: tensor(0.7603, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0079_00_0
+abs_diff: 0.17047102749347687, rel_diff: 0.08422104269266129, delta_25: 0.9346106648445129
+psnr: tensor(26.5722, device='cuda:0') lpips: tensor(0.2479, device='cuda:0') ssim: tensor(0.7707, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(26.6387, device='cuda:0') lpips: tensor(0.2634, device='cuda:0') ssim: tensor(0.7754, device='cuda:0') mask: tensor(6, device='cuda:0')
+processing scene0079_00_1
+abs_diff: 0.14810031652450562, rel_diff: 0.07280196249485016, delta_25: 0.9425795078277588
+psnr: tensor(25.3513, device='cuda:0') lpips: tensor(0.2875, device='cuda:0') ssim: tensor(0.7310, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(25.1744, device='cuda:0') lpips: tensor(0.2956, device='cuda:0') ssim: tensor(0.7256, device='cuda:0') mask: tensor(6, device='cuda:0')
+processing scene0079_00_2
+abs_diff: 0.22319677472114563, rel_diff: 0.09694168716669083, delta_25: 0.9181999564170837
+psnr: tensor(25.6788, device='cuda:0') lpips: tensor(0.2805, device='cuda:0') ssim: tensor(0.7528, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(24.6298, device='cuda:0') lpips: tensor(0.2830, device='cuda:0') ssim: tensor(0.7547, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0079_00_3
+abs_diff: 0.1001134067773819, rel_diff: 0.045886192470788956, delta_25: 0.9610221982002258
+psnr: tensor(26.3814, device='cuda:0') lpips: tensor(0.3046, device='cuda:0') ssim: tensor(0.7548, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(25.9424, device='cuda:0') lpips: tensor(0.3268, device='cuda:0') ssim: tensor(0.7361, device='cuda:0') mask: tensor(9, device='cuda:0')
+processing scene0079_00_4
+abs_diff: 0.10061849653720856, rel_diff: 0.04647200554609299, delta_25: 0.9592666625976562
+psnr: tensor(25.3683, device='cuda:0') lpips: tensor(0.2950, device='cuda:0') ssim: tensor(0.7496, device='cuda:0') mask: tensor(5, device='cuda:0')
+psnr: tensor(26.4312, device='cuda:0') lpips: tensor(0.3140, device='cuda:0') ssim: tensor(0.7453, device='cuda:0') mask: tensor(9, device='cuda:0')
+processing scene0079_00_5
+abs_diff: 0.24339927732944489, rel_diff: 0.10674483329057693, delta_25: 0.897064745426178
+psnr: tensor(25.2652, device='cuda:0') lpips: tensor(0.2833, device='cuda:0') ssim: tensor(0.7420, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(22.6803, device='cuda:0') lpips: tensor(0.3334, device='cuda:0') ssim: tensor(0.7069, device='cuda:0') mask: tensor(2, device='cuda:0')
+processing scene0079_00_6
+abs_diff: 0.25129181146621704, rel_diff: 0.0959017425775528, delta_25: 0.8961912989616394
+psnr: tensor(26.0233, device='cuda:0') lpips: tensor(0.3047, device='cuda:0') ssim: tensor(0.7419, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(23.1910, device='cuda:0') lpips: tensor(0.3132, device='cuda:0') ssim: tensor(0.6737, device='cuda:0') mask: tensor(4, device='cuda:0')
+processing scene0079_00_7
+abs_diff: 0.22913485765457153, rel_diff: 0.08429455757141113, delta_25: 0.9273427128791809
+psnr: tensor(26.2929, device='cuda:0') lpips: tensor(0.3141, device='cuda:0') ssim: tensor(0.7398, device='cuda:0') mask: tensor(6, device='cuda:0')
+psnr: tensor(24.9380, device='cuda:0') lpips: tensor(0.2922, device='cuda:0') ssim: tensor(0.7310, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0079_00_8
+abs_diff: 0.08461761474609375, rel_diff: 0.04096217826008797, delta_25: 0.9766901731491089
+psnr: tensor(26.3516, device='cuda:0') lpips: tensor(0.2819, device='cuda:0') ssim: tensor(0.7526, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(26.5059, device='cuda:0') lpips: tensor(0.3097, device='cuda:0') ssim: tensor(0.7236, device='cuda:0') mask: tensor(9, device='cuda:0')
+processing scene0079_00_9
+abs_diff: 0.10698927938938141, rel_diff: 0.04894769936800003, delta_25: 0.9591993689537048
+psnr: tensor(25.1488, device='cuda:0') lpips: tensor(0.3074, device='cuda:0') ssim: tensor(0.7482, device='cuda:0') mask: tensor(6, device='cuda:0')
+psnr: tensor(25.1060, device='cuda:0') lpips: tensor(0.3159, device='cuda:0') ssim: tensor(0.7268, device='cuda:0') mask: tensor(8, device='cuda:0')
+processing scene0158_00_0
+abs_diff: 0.12714862823486328, rel_diff: 0.0969393402338028, delta_25: 0.946330726146698
+psnr: tensor(28.3934, device='cuda:0') lpips: tensor(0.2023, device='cuda:0') ssim: tensor(0.8787, device='cuda:0') mask: tensor(6, device='cuda:0')
+psnr: tensor(25.9626, device='cuda:0') lpips: tensor(0.2171, device='cuda:0') ssim: tensor(0.8267, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0158_00_1
+abs_diff: 0.15644963085651398, rel_diff: 0.11664585024118423, delta_25: 0.9210032224655151
+psnr: tensor(26.5161, device='cuda:0') lpips: tensor(0.2108, device='cuda:0') ssim: tensor(0.8717, device='cuda:0') mask: tensor(6, device='cuda:0')
+psnr: tensor(25.3050, device='cuda:0') lpips: tensor(0.2053, device='cuda:0') ssim: tensor(0.8956, device='cuda:0') mask: tensor(2, device='cuda:0')
+processing scene0158_00_2
+abs_diff: 0.0817665234208107, rel_diff: 0.07250729948282242, delta_25: 0.9464075565338135
+psnr: tensor(26.1637, device='cuda:0') lpips: tensor(0.2262, device='cuda:0') ssim: tensor(0.8385, device='cuda:0') mask: tensor(9, device='cuda:0')
+psnr: tensor(22.9148, device='cuda:0') lpips: tensor(0.2615, device='cuda:0') ssim: tensor(0.7896, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0158_00_3
+abs_diff: 0.1522783786058426, rel_diff: 0.11079655587673187, delta_25: 0.9193031787872314
+psnr: tensor(27.0167, device='cuda:0') lpips: tensor(0.2223, device='cuda:0') ssim: tensor(0.8708, device='cuda:0') mask: tensor(6, device='cuda:0')
+psnr: tensor(27.1828, device='cuda:0') lpips: tensor(0.2140, device='cuda:0') ssim: tensor(0.8881, device='cuda:0') mask: tensor(4, device='cuda:0')
+processing scene0158_00_4
+abs_diff: 0.1092667207121849, rel_diff: 0.09401729702949524, delta_25: 0.9263718128204346
+psnr: tensor(27.4525, device='cuda:0') lpips: tensor(0.1944, device='cuda:0') ssim: tensor(0.8733, device='cuda:0') mask: tensor(5, device='cuda:0')
+psnr: tensor(24.7515, device='cuda:0') lpips: tensor(0.3002, device='cuda:0') ssim: tensor(0.8142, device='cuda:0') mask: tensor(7, device='cuda:0')
+processing scene0158_00_5
+abs_diff: 0.09726349264383316, rel_diff: 0.08189617097377777, delta_25: 0.9339320063591003
+psnr: tensor(27.6877, device='cuda:0') lpips: tensor(0.1953, device='cuda:0') ssim: tensor(0.8718, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(25.0272, device='cuda:0') lpips: tensor(0.3057, device='cuda:0') ssim: tensor(0.8120, device='cuda:0') mask: tensor(7, device='cuda:0')
+processing scene0158_00_6
+abs_diff: 0.10564683377742767, rel_diff: 0.06901618093252182, delta_25: 0.9611172080039978
+psnr: tensor(27.2721, device='cuda:0') lpips: tensor(0.1964, device='cuda:0') ssim: tensor(0.8619, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(22.7408, device='cuda:0') lpips: tensor(0.2468, device='cuda:0') ssim: tensor(0.8179, device='cuda:0') mask: tensor(6, device='cuda:0')
+processing scene0158_00_7
+abs_diff: 0.11357630789279938, rel_diff: 0.09956466406583786, delta_25: 0.9201255440711975
+psnr: tensor(26.7648, device='cuda:0') lpips: tensor(0.2258, device='cuda:0') ssim: tensor(0.8592, device='cuda:0') mask: tensor(5, device='cuda:0')
+psnr: tensor(25.4093, device='cuda:0') lpips: tensor(0.2347, device='cuda:0') ssim: tensor(0.8313, device='cuda:0') mask: tensor(7, device='cuda:0')
+processing scene0158_00_8
+abs_diff: 0.10060592740774155, rel_diff: 0.08210264891386032, delta_25: 0.9501965641975403
+psnr: tensor(28.4627, device='cuda:0') lpips: tensor(0.2199, device='cuda:0') ssim: tensor(0.8654, device='cuda:0') mask: tensor(6, device='cuda:0')
+psnr: tensor(25.9969, device='cuda:0') lpips: tensor(0.2231, device='cuda:0') ssim: tensor(0.8233, device='cuda:0') mask: tensor(7, device='cuda:0')
+processing scene0158_00_9
+abs_diff: 0.08231519162654877, rel_diff: 0.07000067085027695, delta_25: 0.9528757929801941
+psnr: tensor(26.9776, device='cuda:0') lpips: tensor(0.2074, device='cuda:0') ssim: tensor(0.8536, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(25.6813, device='cuda:0') lpips: tensor(0.2750, device='cuda:0') ssim: tensor(0.8010, device='cuda:0') mask: tensor(6, device='cuda:0')
+processing scene0316_00_0
+abs_diff: 0.16310487687587738, rel_diff: 0.08583983033895493, delta_25: 0.9598286747932434
+psnr: tensor(22.1517, device='cuda:0') lpips: tensor(0.2093, device='cuda:0') ssim: tensor(0.8232, device='cuda:0') mask: tensor(4, device='cuda:0')
+psnr: tensor(22.7452, device='cuda:0') lpips: tensor(0.2404, device='cuda:0') ssim: tensor(0.8329, device='cuda:0') mask: tensor(4, device='cuda:0')
+processing scene0316_00_1
+abs_diff: 0.13592401146888733, rel_diff: 0.07273592799901962, delta_25: 0.9655630588531494
+psnr: tensor(22.9465, device='cuda:0') lpips: tensor(0.2057, device='cuda:0') ssim: tensor(0.8551, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(21.7806, device='cuda:0') lpips: tensor(0.2413, device='cuda:0') ssim: tensor(0.8139, device='cuda:0') mask: tensor(6, device='cuda:0')
+processing scene0316_00_2
+abs_diff: 0.10829614102840424, rel_diff: 0.0597088485956192, delta_25: 0.9633818864822388
+psnr: tensor(23.5527, device='cuda:0') lpips: tensor(0.2482, device='cuda:0') ssim: tensor(0.8460, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(25.8402, device='cuda:0') lpips: tensor(0.2359, device='cuda:0') ssim: tensor(0.8651, device='cuda:0') mask: tensor(8, device='cuda:0')
+processing scene0316_00_3
+abs_diff: 0.1019691750407219, rel_diff: 0.06004411727190018, delta_25: 0.9648699164390564
+psnr: tensor(26.3340, device='cuda:0') lpips: tensor(0.2094, device='cuda:0') ssim: tensor(0.8837, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(20.7308, device='cuda:0') lpips: tensor(0.3614, device='cuda:0') ssim: tensor(0.7725, device='cuda:0') mask: tensor(1, device='cuda:0')
+processing scene0316_00_4
+abs_diff: 0.18269139528274536, rel_diff: 0.10604563355445862, delta_25: 0.9202446341514587
+psnr: tensor(25.5386, device='cuda:0') lpips: tensor(0.2141, device='cuda:0') ssim: tensor(0.8975, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(23.0828, device='cuda:0') lpips: tensor(0.2247, device='cuda:0') ssim: tensor(0.8858, device='cuda:0') mask: tensor(4, device='cuda:0')
+processing scene0316_00_5
+abs_diff: 0.13978783786296844, rel_diff: 0.07188506424427032, delta_25: 0.9579955339431763
+psnr: tensor(16.4146, device='cuda:0') lpips: tensor(0.3210, device='cuda:0') ssim: tensor(0.6321, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(16.8796, device='cuda:0') lpips: tensor(0.2942, device='cuda:0') ssim: tensor(0.6753, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0316_00_6
+abs_diff: 0.14360100030899048, rel_diff: 0.08345786482095718, delta_25: 0.9461643695831299
+psnr: tensor(27.1741, device='cuda:0') lpips: tensor(0.2104, device='cuda:0') ssim: tensor(0.8994, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(23.6447, device='cuda:0') lpips: tensor(0.2167, device='cuda:0') ssim: tensor(0.8651, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0316_00_7
+abs_diff: 0.10581529140472412, rel_diff: 0.05944767966866493, delta_25: 0.9558618664741516
+psnr: tensor(24.9483, device='cuda:0') lpips: tensor(0.2124, device='cuda:0') ssim: tensor(0.8778, device='cuda:0') mask: tensor(6, device='cuda:0')
+psnr: tensor(19.5925, device='cuda:0') lpips: tensor(0.3021, device='cuda:0') ssim: tensor(0.7777, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0316_00_8
+abs_diff: 0.13845014572143555, rel_diff: 0.07491286098957062, delta_25: 0.9649384617805481
+psnr: tensor(21.6680, device='cuda:0') lpips: tensor(0.2173, device='cuda:0') ssim: tensor(0.8242, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(22.0243, device='cuda:0') lpips: tensor(0.2378, device='cuda:0') ssim: tensor(0.8245, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0316_00_9
+abs_diff: 0.10954950004816055, rel_diff: 0.06152569502592087, delta_25: 0.9536542892456055
+psnr: tensor(25.3120, device='cuda:0') lpips: tensor(0.2193, device='cuda:0') ssim: tensor(0.8778, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(19.2677, device='cuda:0') lpips: tensor(0.2982, device='cuda:0') ssim: tensor(0.7787, device='cuda:0') mask: tensor(4, device='cuda:0')
+processing scene0521_00_0
+abs_diff: 0.08541422337293625, rel_diff: 0.06508145481348038, delta_25: 0.9593241810798645
+psnr: tensor(28.4397, device='cuda:0') lpips: tensor(0.2575, device='cuda:0') ssim: tensor(0.7885, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(28.4104, device='cuda:0') lpips: tensor(0.2675, device='cuda:0') ssim: tensor(0.7756, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0521_00_1
+abs_diff: 0.11005294322967529, rel_diff: 0.08785168081521988, delta_25: 0.9517468214035034
+psnr: tensor(28.9772, device='cuda:0') lpips: tensor(0.2670, device='cuda:0') ssim: tensor(0.7925, device='cuda:0') mask: tensor(5, device='cuda:0')
+psnr: tensor(28.6769, device='cuda:0') lpips: tensor(0.2563, device='cuda:0') ssim: tensor(0.7682, device='cuda:0') mask: tensor(2, device='cuda:0')
+processing scene0521_00_2
+abs_diff: 0.07974622398614883, rel_diff: 0.060755498707294464, delta_25: 0.9711988568305969
+psnr: tensor(29.7269, device='cuda:0') lpips: tensor(0.2381, device='cuda:0') ssim: tensor(0.8015, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(28.3653, device='cuda:0') lpips: tensor(0.2570, device='cuda:0') ssim: tensor(0.7758, device='cuda:0') mask: tensor(6, device='cuda:0')
+processing scene0521_00_3
+abs_diff: 0.13386967778205872, rel_diff: 0.08411931246519089, delta_25: 0.9092974066734314
+psnr: tensor(27.6464, device='cuda:0') lpips: tensor(0.2578, device='cuda:0') ssim: tensor(0.7695, device='cuda:0') mask: tensor(6, device='cuda:0')
+psnr: tensor(27.2321, device='cuda:0') lpips: tensor(0.3057, device='cuda:0') ssim: tensor(0.7368, device='cuda:0') mask: tensor(6, device='cuda:0')
+processing scene0521_00_4
+abs_diff: 0.08029157668352127, rel_diff: 0.06348040699958801, delta_25: 0.940512478351593
+psnr: tensor(29.2043, device='cuda:0') lpips: tensor(0.2641, device='cuda:0') ssim: tensor(0.7828, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(29.2240, device='cuda:0') lpips: tensor(0.2242, device='cuda:0') ssim: tensor(0.7856, device='cuda:0') mask: tensor(6, device='cuda:0')
+processing scene0521_00_5
+abs_diff: 0.06083466485142708, rel_diff: 0.057072825729846954, delta_25: 0.9687727689743042
+psnr: tensor(24.5696, device='cuda:0') lpips: tensor(0.2792, device='cuda:0') ssim: tensor(0.7519, device='cuda:0') mask: tensor(5, device='cuda:0')
+psnr: tensor(21.1225, device='cuda:0') lpips: tensor(0.3174, device='cuda:0') ssim: tensor(0.6763, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0521_00_6
+abs_diff: 0.0651414692401886, rel_diff: 0.058506667613983154, delta_25: 0.9729169011116028
+psnr: tensor(25.3805, device='cuda:0') lpips: tensor(0.2483, device='cuda:0') ssim: tensor(0.7740, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(22.5033, device='cuda:0') lpips: tensor(0.2835, device='cuda:0') ssim: tensor(0.7224, device='cuda:0') mask: tensor(8, device='cuda:0')
+processing scene0521_00_7
+abs_diff: 0.16852839291095734, rel_diff: 0.12729549407958984, delta_25: 0.9130611419677734
+psnr: tensor(28.1485, device='cuda:0') lpips: tensor(0.2644, device='cuda:0') ssim: tensor(0.7750, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(28.1672, device='cuda:0') lpips: tensor(0.2642, device='cuda:0') ssim: tensor(0.7728, device='cuda:0') mask: tensor(4, device='cuda:0')
+processing scene0521_00_8
+abs_diff: 0.0900605246424675, rel_diff: 0.06573006510734558, delta_25: 0.9387677311897278
+psnr: tensor(28.7527, device='cuda:0') lpips: tensor(0.2481, device='cuda:0') ssim: tensor(0.7710, device='cuda:0') mask: tensor(9, device='cuda:0')
+psnr: tensor(27.4854, device='cuda:0') lpips: tensor(0.3067, device='cuda:0') ssim: tensor(0.7554, device='cuda:0') mask: tensor(7, device='cuda:0')
+processing scene0521_00_9
+abs_diff: 0.09324220567941666, rel_diff: 0.06556949764490128, delta_25: 0.9437830448150635
+psnr: tensor(28.6185, device='cuda:0') lpips: tensor(0.2463, device='cuda:0') ssim: tensor(0.7831, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(28.5781, device='cuda:0') lpips: tensor(0.2849, device='cuda:0') ssim: tensor(0.7794, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0553_00_0
+abs_diff: 0.0742722749710083, rel_diff: 0.04818965867161751, delta_25: 0.9811562299728394
+psnr: tensor(27.5026, device='cuda:0') lpips: tensor(0.2080, device='cuda:0') ssim: tensor(0.8792, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(26.4363, device='cuda:0') lpips: tensor(0.2393, device='cuda:0') ssim: tensor(0.8665, device='cuda:0') mask: tensor(6, device='cuda:0')
+processing scene0553_00_1
+abs_diff: 0.22043858468532562, rel_diff: 0.18096096813678741, delta_25: 0.8212332129478455
+psnr: tensor(27.2365, device='cuda:0') lpips: tensor(0.2875, device='cuda:0') ssim: tensor(0.8584, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(27.3144, device='cuda:0') lpips: tensor(0.2913, device='cuda:0') ssim: tensor(0.8570, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0553_00_2
+abs_diff: 0.07217846810817719, rel_diff: 0.048313166946172714, delta_25: 0.9771721959114075
+psnr: tensor(27.3641, device='cuda:0') lpips: tensor(0.2009, device='cuda:0') ssim: tensor(0.8674, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(24.9415, device='cuda:0') lpips: tensor(0.2167, device='cuda:0') ssim: tensor(0.8402, device='cuda:0') mask: tensor(8, device='cuda:0')
+processing scene0553_00_3
+abs_diff: 0.18545503914356232, rel_diff: 0.1451953649520874, delta_25: 0.8360471129417419
+psnr: tensor(28.2289, device='cuda:0') lpips: tensor(0.2505, device='cuda:0') ssim: tensor(0.8847, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(28.3505, device='cuda:0') lpips: tensor(0.2338, device='cuda:0') ssim: tensor(0.9029, device='cuda:0') mask: tensor(8, device='cuda:0')
+processing scene0553_00_4
+abs_diff: 0.2011498361825943, rel_diff: 0.15090425312519073, delta_25: 0.9002185463905334
+psnr: tensor(29.4104, device='cuda:0') lpips: tensor(0.2551, device='cuda:0') ssim: tensor(0.8791, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(27.4399, device='cuda:0') lpips: tensor(0.3076, device='cuda:0') ssim: tensor(0.8653, device='cuda:0') mask: tensor(4, device='cuda:0')
+processing scene0553_00_5
+abs_diff: 0.186845600605011, rel_diff: 0.15399517118930817, delta_25: 0.7978063821792603
+psnr: tensor(27.1837, device='cuda:0') lpips: tensor(0.2886, device='cuda:0') ssim: tensor(0.8521, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(30.4362, device='cuda:0') lpips: tensor(0.2560, device='cuda:0') ssim: tensor(0.8818, device='cuda:0') mask: tensor(6, device='cuda:0')
+processing scene0553_00_6
+abs_diff: 0.19676882028579712, rel_diff: 0.1716044694185257, delta_25: 0.785033106803894
+psnr: tensor(28.2949, device='cuda:0') lpips: tensor(0.2497, device='cuda:0') ssim: tensor(0.8745, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(26.8036, device='cuda:0') lpips: tensor(0.2887, device='cuda:0') ssim: tensor(0.8736, device='cuda:0') mask: tensor(9, device='cuda:0')
+processing scene0553_00_7
+abs_diff: 0.19067487120628357, rel_diff: 0.1612550914287567, delta_25: 0.7845876812934875
+psnr: tensor(29.0208, device='cuda:0') lpips: tensor(0.2527, device='cuda:0') ssim: tensor(0.8794, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(26.2159, device='cuda:0') lpips: tensor(0.2990, device='cuda:0') ssim: tensor(0.8617, device='cuda:0') mask: tensor(9, device='cuda:0')
+processing scene0553_00_8
+abs_diff: 0.21169129014015198, rel_diff: 0.17700490355491638, delta_25: 0.7781187295913696
+psnr: tensor(27.8781, device='cuda:0') lpips: tensor(0.2725, device='cuda:0') ssim: tensor(0.8619, device='cuda:0') mask: tensor(5, device='cuda:0')
+psnr: tensor(26.2791, device='cuda:0') lpips: tensor(0.2911, device='cuda:0') ssim: tensor(0.8648, device='cuda:0') mask: tensor(9, device='cuda:0')
+processing scene0553_00_9
+abs_diff: 0.07615923881530762, rel_diff: 0.050809022039175034, delta_25: 0.9700828194618225
+psnr: tensor(31.2583, device='cuda:0') lpips: tensor(0.2222, device='cuda:0') ssim: tensor(0.8918, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(31.5842, device='cuda:0') lpips: tensor(0.2215, device='cuda:0') ssim: tensor(0.8948, device='cuda:0') mask: tensor(9, device='cuda:0')
+processing scene0616_00_0
+abs_diff: 0.1945842057466507, rel_diff: 0.10784872621297836, delta_25: 0.9055379033088684
+psnr: tensor(21.7128, device='cuda:0') lpips: tensor(0.3193, device='cuda:0') ssim: tensor(0.6719, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(21.1991, device='cuda:0') lpips: tensor(0.3775, device='cuda:0') ssim: tensor(0.6821, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0616_00_1
+abs_diff: 0.2654639482498169, rel_diff: 0.1464957892894745, delta_25: 0.8422837853431702
+psnr: tensor(21.7575, device='cuda:0') lpips: tensor(0.3458, device='cuda:0') ssim: tensor(0.6946, device='cuda:0') mask: tensor(6, device='cuda:0')
+psnr: tensor(22.4781, device='cuda:0') lpips: tensor(0.3324, device='cuda:0') ssim: tensor(0.7269, device='cuda:0') mask: tensor(4, device='cuda:0')
+processing scene0616_00_2
+abs_diff: 0.14717769622802734, rel_diff: 0.07438061386346817, delta_25: 0.9376133680343628
+psnr: tensor(21.8274, device='cuda:0') lpips: tensor(0.3228, device='cuda:0') ssim: tensor(0.7064, device='cuda:0') mask: tensor(9, device='cuda:0')
+psnr: tensor(20.2205, device='cuda:0') lpips: tensor(0.3978, device='cuda:0') ssim: tensor(0.6952, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0616_00_3
+abs_diff: 0.15301395952701569, rel_diff: 0.07560566812753677, delta_25: 0.9252588748931885
+psnr: tensor(21.9825, device='cuda:0') lpips: tensor(0.3296, device='cuda:0') ssim: tensor(0.6925, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(18.9835, device='cuda:0') lpips: tensor(0.3954, device='cuda:0') ssim: tensor(0.6792, device='cuda:0') mask: tensor(6, device='cuda:0')
+processing scene0616_00_4
+abs_diff: 0.2894863188266754, rel_diff: 0.15221047401428223, delta_25: 0.8213658332824707
+psnr: tensor(22.6736, device='cuda:0') lpips: tensor(0.2851, device='cuda:0') ssim: tensor(0.7930, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(19.3757, device='cuda:0') lpips: tensor(0.2999, device='cuda:0') ssim: tensor(0.8264, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0616_00_5
+abs_diff: 0.23858128488063812, rel_diff: 0.12035870552062988, delta_25: 0.9215861558914185
+psnr: tensor(23.0554, device='cuda:0') lpips: tensor(0.2812, device='cuda:0') ssim: tensor(0.7724, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(21.3167, device='cuda:0') lpips: tensor(0.3368, device='cuda:0') ssim: tensor(0.7942, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0616_00_6
+abs_diff: 0.27983543276786804, rel_diff: 0.15074534714221954, delta_25: 0.8506086468696594
+psnr: tensor(23.2971, device='cuda:0') lpips: tensor(0.2848, device='cuda:0') ssim: tensor(0.7958, device='cuda:0') mask: tensor(6, device='cuda:0')
+psnr: tensor(19.6711, device='cuda:0') lpips: tensor(0.2880, device='cuda:0') ssim: tensor(0.8253, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0616_00_7
+abs_diff: 0.13915878534317017, rel_diff: 0.07048817723989487, delta_25: 0.9274634122848511
+psnr: tensor(20.1337, device='cuda:0') lpips: tensor(0.4048, device='cuda:0') ssim: tensor(0.6417, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(20.8151, device='cuda:0') lpips: tensor(0.3874, device='cuda:0') ssim: tensor(0.6409, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0616_00_8
+abs_diff: 0.23219738900661469, rel_diff: 0.1337525099515915, delta_25: 0.8654758334159851
+psnr: tensor(22.0117, device='cuda:0') lpips: tensor(0.3043, device='cuda:0') ssim: tensor(0.8233, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(0., device='cuda:0') lpips: tensor(0., device='cuda:0') ssim: tensor(0., device='cuda:0') mask: tensor(0, device='cuda:0')
+processing scene0616_00_9
+abs_diff: 0.1342473030090332, rel_diff: 0.0685969889163971, delta_25: 0.9268115162849426
+psnr: tensor(20.3342, device='cuda:0') lpips: tensor(0.3664, device='cuda:0') ssim: tensor(0.6733, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(20.7841, device='cuda:0') lpips: tensor(0.3800, device='cuda:0') ssim: tensor(0.6838, device='cuda:0') mask: tensor(7, device='cuda:0')
+processing scene0653_00_0
+abs_diff: 0.18238742649555206, rel_diff: 0.0916784480214119, delta_25: 0.9319908618927002
+psnr: tensor(23.6577, device='cuda:0') lpips: tensor(0.2030, device='cuda:0') ssim: tensor(0.8058, device='cuda:0') mask: tensor(9, device='cuda:0')
+psnr: tensor(22.2679, device='cuda:0') lpips: tensor(0.2333, device='cuda:0') ssim: tensor(0.7800, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0653_00_1
+abs_diff: 0.22505517303943634, rel_diff: 0.12014880776405334, delta_25: 0.836567759513855
+psnr: tensor(23.0363, device='cuda:0') lpips: tensor(0.2612, device='cuda:0') ssim: tensor(0.8068, device='cuda:0') mask: tensor(9, device='cuda:0')
+psnr: tensor(24.3234, device='cuda:0') lpips: tensor(0.2858, device='cuda:0') ssim: tensor(0.8330, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0653_00_2
+abs_diff: 0.2118421494960785, rel_diff: 0.10682471096515656, delta_25: 0.8958743214607239
+psnr: tensor(22.4256, device='cuda:0') lpips: tensor(0.2732, device='cuda:0') ssim: tensor(0.7632, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(22.0121, device='cuda:0') lpips: tensor(0.2971, device='cuda:0') ssim: tensor(0.7669, device='cuda:0') mask: tensor(3, device='cuda:0')
+processing scene0653_00_3
+abs_diff: 0.1716701239347458, rel_diff: 0.089237742125988, delta_25: 0.9137080311775208
+psnr: tensor(22.9513, device='cuda:0') lpips: tensor(0.2652, device='cuda:0') ssim: tensor(0.7541, device='cuda:0') mask: tensor(6, device='cuda:0')
+psnr: tensor(21.7905, device='cuda:0') lpips: tensor(0.3008, device='cuda:0') ssim: tensor(0.7453, device='cuda:0') mask: tensor(6, device='cuda:0')
+processing scene0653_00_4
+abs_diff: 0.17569491267204285, rel_diff: 0.09144022315740585, delta_25: 0.8998416066169739
+psnr: tensor(22.0073, device='cuda:0') lpips: tensor(0.2690, device='cuda:0') ssim: tensor(0.7559, device='cuda:0') mask: tensor(7, device='cuda:0')
+psnr: tensor(23.5107, device='cuda:0') lpips: tensor(0.2745, device='cuda:0') ssim: tensor(0.7648, device='cuda:0') mask: tensor(6, device='cuda:0')
+processing scene0653_00_5
+abs_diff: 0.16704468429088593, rel_diff: 0.08965912461280823, delta_25: 0.9086337685585022
+psnr: tensor(22.6904, device='cuda:0') lpips: tensor(0.2675, device='cuda:0') ssim: tensor(0.7672, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(23.0378, device='cuda:0') lpips: tensor(0.2693, device='cuda:0') ssim: tensor(0.7676, device='cuda:0') mask: tensor(8, device='cuda:0')
+processing scene0653_00_6
+abs_diff: 0.2324807345867157, rel_diff: 0.11177752166986465, delta_25: 0.8968390226364136
+psnr: tensor(24.7362, device='cuda:0') lpips: tensor(0.1941, device='cuda:0') ssim: tensor(0.7890, device='cuda:0') mask: tensor(8, device='cuda:0')
+psnr: tensor(21.8991, device='cuda:0') lpips: tensor(0.2423, device='cuda:0') ssim: tensor(0.7647, device='cuda:0') mask: tensor(8, device='cuda:0')
+processing scene0653_00_7
+abs_diff: 0.11376142501831055, rel_diff: 0.06278140842914581, delta_25: 0.9320985078811646
+psnr: tensor(20.2367, device='cuda:0') lpips: tensor(0.2843, device='cuda:0') ssim: tensor(0.7856, device='cuda:0') mask: tensor(9, device='cuda:0')
+psnr: tensor(20.1397, device='cuda:0') lpips: tensor(0.2772, device='cuda:0') ssim: tensor(0.7967, device='cuda:0') mask: tensor(8, device='cuda:0')
+processing scene0653_00_8
+abs_diff: 0.16890297830104828, rel_diff: 0.10319071263074875, delta_25: 0.888353168964386
+psnr: tensor(23.4923, device='cuda:0') lpips: tensor(0.2850, device='cuda:0') ssim: tensor(0.7843, device='cuda:0') mask: tensor(9, device='cuda:0')
+psnr: tensor(22.1204, device='cuda:0') lpips: tensor(0.2735, device='cuda:0') ssim: tensor(0.7652, device='cuda:0') mask: tensor(5, device='cuda:0')
+processing scene0653_00_9
+abs_diff: 0.15273962914943695, rel_diff: 0.08467013388872147, delta_25: 0.9077513217926025
+psnr: tensor(23.4028, device='cuda:0') lpips: tensor(0.2632, device='cuda:0') ssim: tensor(0.7911, device='cuda:0') mask: tensor(9, device='cuda:0')
+psnr: tensor(23.3219, device='cuda:0') lpips: tensor(0.2861, device='cuda:0') ssim: tensor(0.7697, device='cuda:0') mask: tensor(8, device='cuda:0')
+scene0000_01_0 27.771705627441406 0.796012818813324 0.2560858726501465 26.294017791748047 0.788986325263977 0.2645743489265442 0.1316436380147934 0.06778514385223389 0.96015864610672
+scene0000_01_1 27.918230056762695 0.8031865954399109 0.2474719136953354 27.12090492248535 0.7983442544937134 0.24641117453575134 0.1642879992723465 0.08661938458681107 0.9454905390739441
+scene0000_01_2 23.683032989501953 0.7531555891036987 0.32969823479652405 21.671316146850586 0.6702187061309814 0.3739532232284546 0.19951556622982025 0.0922950953245163 0.9148241877555847
+scene0000_01_3 26.953842163085938 0.7937296628952026 0.2569141089916229 27.998445510864258 0.815880537033081 0.28532761335372925 0.12954218685626984 0.07022334635257721 0.9436999559402466
+scene0000_01_4 26.08959197998047 0.779781699180603 0.26590749621391296 26.634592056274414 0.7700364589691162 0.2752256989479065 0.17721329629421234 0.09472199529409409 0.8989332318305969
+scene0000_01_5 25.012380599975586 0.7749261856079102 0.2803838849067688 23.51211166381836 0.7196656465530396 0.33045119047164917 0.13335160911083221 0.06783757358789444 0.9564496278762817
+scene0000_01_6 23.35572624206543 0.7511749863624573 0.3131546080112457 22.044401168823242 0.7262544631958008 0.3425898253917694 0.16105683147907257 0.08066049218177795 0.9370487332344055
+scene0000_01_7 24.541133880615234 0.7480758428573608 0.2767544984817505 23.979190826416016 0.7586874961853027 0.28713932633399963 0.1741134077310562 0.07536739856004715 0.91965252161026
+scene0000_01_8 25.50589942932129 0.7670896053314209 0.27164095640182495 24.100801467895508 0.7365114092826843 0.27346324920654297 0.14160384237766266 0.06550440937280655 0.9506276249885559
+scene0000_01_9 27.788169860839844 0.795915424823761 0.25513985753059387 25.46533966064453 0.7603256702423096 0.31032928824424744 0.1441594511270523 0.07456939667463303 0.9548605680465698
+scene0079_00_0 26.57221794128418 0.7707430124282837 0.24793042242527008 26.638744354248047 0.7754145264625549 0.26342281699180603 0.17047102749347687 0.08422104269266129 0.9346106648445129
+scene0079_00_1 25.35127830505371 0.7310101985931396 0.2874986231327057 25.174367904663086 0.7255570292472839 0.2955802083015442 0.14810031652450562 0.07280196249485016 0.9425795078277588
+scene0079_00_2 25.678794860839844 0.7528461217880249 0.28054630756378174 24.629838943481445 0.7547494173049927 0.28295567631721497 0.22319677472114563 0.09694168716669083 0.9181999564170837
+scene0079_00_3 26.38140296936035 0.7548436522483826 0.3046318590641022 25.942392349243164 0.7361060380935669 0.3267876207828522 0.1001134067773819 0.045886192470788956 0.9610221982002258
+scene0079_00_4 25.368282318115234 0.7495527863502502 0.29498592019081116 26.431198120117188 0.7452961802482605 0.3139892518520355 0.10061849653720856 0.04647200554609299 0.9592666625976562
+scene0079_00_5 25.265174865722656 0.7419853210449219 0.2832898795604706 22.680299758911133 0.706913411617279 0.33341243863105774 0.24339927732944489 0.10674483329057693 0.897064745426178
+scene0079_00_6 26.02326774597168 0.7418740391731262 0.30470529198646545 23.190990447998047 0.673676609992981 0.31322482228279114 0.25129181146621704 0.0959017425775528 0.8961912989616394
+scene0079_00_7 26.292922973632812 0.7397856116294861 0.3140765428543091 24.93799591064453 0.7309777736663818 0.2922060489654541 0.22913485765457153 0.08429455757141113 0.9273427128791809
+scene0079_00_8 26.35157012939453 0.7525591254234314 0.2819061577320099 26.505870819091797 0.7235852479934692 0.3097067177295685 0.08461761474609375 0.04096217826008797 0.9766901731491089
+scene0079_00_9 25.14876937866211 0.7482346296310425 0.30744677782058716 25.106019973754883 0.7267809510231018 0.3159499168395996 0.10698927938938141 0.04894769936800003 0.9591993689537048
+scene0158_00_0 28.393421173095703 0.8787016868591309 0.20227327942848206 25.962568283081055 0.8267089128494263 0.21708153188228607 0.12714862823486328 0.0969393402338028 0.946330726146698
+scene0158_00_1 26.516096115112305 0.8716723322868347 0.21080541610717773 25.305011749267578 0.8956176042556763 0.20533429086208344 0.15644963085651398 0.11664585024118423 0.9210032224655151
+scene0158_00_2 26.163747787475586 0.8385350108146667 0.22620612382888794 22.914840698242188 0.7895689010620117 0.26152610778808594 0.0817665234208107 0.07250729948282242 0.9464075565338135
+scene0158_00_3 27.0167293548584 0.8708223104476929 0.22227060794830322 27.182804107666016 0.8881213665008545 0.2139582484960556 0.1522783786058426 0.11079655587673187 0.9193031787872314
+scene0158_00_4 27.452518463134766 0.873255729675293 0.1943681389093399 24.751483917236328 0.8141542673110962 0.3002346158027649 0.1092667207121849 0.09401729702949524 0.9263718128204346
+scene0158_00_5 27.687711715698242 0.8717883229255676 0.1953146755695343 25.027179718017578 0.8119708895683289 0.30571332573890686 0.09726349264383316 0.08189617097377777 0.9339320063591003
+scene0158_00_6 27.27210807800293 0.8618528246879578 0.1963912844657898 22.740793228149414 0.8178876638412476 0.2467673271894455 0.10564683377742767 0.06901618093252182 0.9611172080039978
+scene0158_00_7 26.76478385925293 0.8592191934585571 0.22583487629890442 25.409324645996094 0.8313120007514954 0.23470912873744965 0.11357630789279938 0.09956466406583786 0.9201255440711975
+scene0158_00_8 28.46274185180664 0.8653709292411804 0.21989905834197998 25.996883392333984 0.8232915997505188 0.2230798602104187 0.10060592740774155 0.08210264891386032 0.9501965641975403
+scene0158_00_9 26.977643966674805 0.8536269664764404 0.20740632712841034 25.681264877319336 0.8010128736495972 0.2749594449996948 0.08231519162654877 0.07000067085027695 0.9528757929801941
+scene0316_00_0 22.151716232299805 0.8231902122497559 0.20927771925926208 22.745193481445312 0.8329286575317383 0.24043220281600952 0.16310487687587738 0.08583983033895493 0.9598286747932434
+scene0316_00_1 22.94649887084961 0.8551381230354309 0.2057330459356308 21.78060531616211 0.8138989806175232 0.24133054912090302 0.13592401146888733 0.07273592799901962 0.9655630588531494
+scene0316_00_2 23.552698135375977 0.8459800481796265 0.24818894267082214 25.840179443359375 0.865060567855835 0.23593172430992126 0.10829614102840424 0.0597088485956192 0.9633818864822388
+scene0316_00_3 26.334007263183594 0.8836900591850281 0.20938724279403687 20.730783462524414 0.7724524140357971 0.36142289638519287 0.1019691750407219 0.06004411727190018 0.9648699164390564
+scene0316_00_4 25.538562774658203 0.8974516987800598 0.21411477029323578 23.082780838012695 0.8857719898223877 0.22473075985908508 0.18269139528274536 0.10604563355445862 0.9202446341514587
+scene0316_00_5 16.41462516784668 0.6321077942848206 0.3209952116012573 16.879627227783203 0.6752792000770569 0.2942392826080322 0.13978783786296844 0.07188506424427032 0.9579955339431763
+scene0316_00_6 27.174142837524414 0.8993933200836182 0.21040284633636475 23.6446533203125 0.8650728464126587 0.21665561199188232 0.14360100030899048 0.08345786482095718 0.9461643695831299
+scene0316_00_7 24.94830894470215 0.8777636885643005 0.21243612468242645 19.592546463012695 0.7776814699172974 0.30210787057876587 0.10581529140472412 0.05944767966866493 0.9558618664741516
+scene0316_00_8 21.668031692504883 0.824234664440155 0.21734587848186493 22.024272918701172 0.8245083093643188 0.2378455251455307 0.13845014572143555 0.07491286098957062 0.9649384617805481
+scene0316_00_9 25.311962127685547 0.8778392672538757 0.21931034326553345 19.267715454101562 0.7786968946456909 0.29820430278778076 0.10954950004816055 0.06152569502592087 0.9536542892456055
+scene0521_00_0 28.439708709716797 0.7885221242904663 0.25750628113746643 28.41036605834961 0.7756333947181702 0.2675473690032959 0.08541422337293625 0.06508145481348038 0.9593241810798645
+scene0521_00_1 28.977197647094727 0.7925192713737488 0.2670426666736603 28.67690086364746 0.7681996822357178 0.25629162788391113 0.11005294322967529 0.08785168081521988 0.9517468214035034
+scene0521_00_2 29.72689437866211 0.8015346527099609 0.23813822865486145 28.365276336669922 0.7758020162582397 0.25703537464141846 0.07974622398614883 0.060755498707294464 0.9711988568305969
+scene0521_00_3 27.646352767944336 0.7694937586784363 0.25781020522117615 27.232078552246094 0.7368203997612 0.3057332932949066 0.13386967778205872 0.08411931246519089 0.9092974066734314
+scene0521_00_4 29.204267501831055 0.782783031463623 0.26413774490356445 29.223974227905273 0.7855578064918518 0.22416047751903534 0.08029157668352127 0.06348040699958801 0.940512478351593
+scene0521_00_5 24.569591522216797 0.7518917322158813 0.27917832136154175 21.12252426147461 0.6762580275535583 0.3174479901790619 0.06083466485142708 0.057072825729846954 0.9687727689743042
+scene0521_00_6 25.38052749633789 0.7740094661712646 0.24829316139221191 22.5033016204834 0.7223626971244812 0.28354787826538086 0.0651414692401886 0.058506667613983154 0.9729169011116028
+scene0521_00_7 28.148483276367188 0.7750291228294373 0.26441869139671326 28.167217254638672 0.772828996181488 0.2641972303390503 0.16852839291095734 0.12729549407958984 0.9130611419677734
+scene0521_00_8 28.752727508544922 0.7710381746292114 0.24813826382160187 27.485410690307617 0.7554194927215576 0.3067060112953186 0.0900605246424675 0.06573006510734558 0.9387677311897278
+scene0521_00_9 28.618488311767578 0.7831075191497803 0.24628567695617676 28.57810401916504 0.7794046998023987 0.2849438190460205 0.09324220567941666 0.06556949764490128 0.9437830448150635
+scene0553_00_0 27.502593994140625 0.8792147040367126 0.20803813636302948 26.43634796142578 0.8665093183517456 0.2392878532409668 0.0742722749710083 0.04818965867161751 0.9811562299728394
+scene0553_00_1 27.236499786376953 0.8583986759185791 0.2874971926212311 27.31443214416504 0.8569967746734619 0.29129651188850403 0.22043858468532562 0.18096096813678741 0.8212332129478455
+scene0553_00_2 27.364118576049805 0.8673830032348633 0.2008807361125946 24.94150161743164 0.8401871919631958 0.216691792011261 0.07217846810817719 0.048313166946172714 0.9771721959114075
+scene0553_00_3 28.228912353515625 0.8846926093101501 0.2505456805229187 28.350540161132812 0.9028656482696533 0.23376823961734772 0.18545503914356232 0.1451953649520874 0.8360471129417419
+scene0553_00_4 29.41037940979004 0.8791233897209167 0.25508832931518555 27.439889907836914 0.8653077483177185 0.3076317608356476 0.2011498361825943 0.15090425312519073 0.9002185463905334
+scene0553_00_5 27.183731079101562 0.8520932793617249 0.28863629698753357 30.4361629486084 0.8818306922912598 0.2559901177883148 0.186845600605011 0.15399517118930817 0.7978063821792603
+scene0553_00_6 28.294910430908203 0.8745120167732239 0.24972105026245117 26.803573608398438 0.8735812902450562 0.2887328267097473 0.19676882028579712 0.1716044694185257 0.785033106803894
+scene0553_00_7 29.020767211914062 0.8794324398040771 0.25273746252059937 26.215909957885742 0.8617406487464905 0.2990272641181946 0.19067487120628357 0.1612550914287567 0.7845876812934875
+scene0553_00_8 27.878143310546875 0.8618714809417725 0.2725425362586975 26.279067993164062 0.8648358583450317 0.29108595848083496 0.21169129014015198 0.17700490355491638 0.7781187295913696
+scene0553_00_9 31.25828742980957 0.8917664289474487 0.2222396582365036 31.584163665771484 0.8947985172271729 0.22146447002887726 0.07615923881530762 0.050809022039175034 0.9700828194618225
+scene0616_00_0 21.71282196044922 0.6719020009040833 0.3193063735961914 21.199092864990234 0.682110071182251 0.3774856626987457 0.1945842057466507 0.10784872621297836 0.9055379033088684
+scene0616_00_1 21.757549285888672 0.6945896744728088 0.3457655608654022 22.478071212768555 0.7269228100776672 0.33241352438926697 0.2654639482498169 0.1464957892894745 0.8422837853431702
+scene0616_00_2 21.82742691040039 0.706365168094635 0.32281848788261414 20.220468521118164 0.6952220797538757 0.3977717459201813 0.14717769622802734 0.07438061386346817 0.9376133680343628
+scene0616_00_3 21.98246955871582 0.6925061941146851 0.3295704126358032 18.98350715637207 0.679225504398346 0.3953893780708313 0.15301395952701569 0.07560566812753677 0.9252588748931885
+scene0616_00_4 22.6735782623291 0.7930400371551514 0.2850961983203888 19.375703811645508 0.8263855576515198 0.2998807728290558 0.2894863188266754 0.15221047401428223 0.8213658332824707
+scene0616_00_5 23.055377960205078 0.7724140286445618 0.28116533160209656 21.316713333129883 0.7941811084747314 0.3367621600627899 0.23858128488063812 0.12035870552062988 0.9215861558914185
+scene0616_00_6 23.297147750854492 0.7957994341850281 0.2847835421562195 19.671083450317383 0.8253074288368225 0.2880377173423767 0.27983543276786804 0.15074534714221954 0.8506086468696594
+scene0616_00_7 20.13374137878418 0.6417285203933716 0.40480783581733704 20.81507110595703 0.6409383416175842 0.38742291927337646 0.13915878534317017 0.07048817723989487 0.9274634122848511
+scene0616_00_8 22.01173973083496 0.8233022093772888 0.3042600750923157 0.0 0.0 0.0 0.23219738900661469 0.1337525099515915 0.8654758334159851
+scene0616_00_9 20.334190368652344 0.6733345985412598 0.3663976788520813 20.784109115600586 0.6838158369064331 0.3799780607223511 0.1342473030090332 0.0685969889163971 0.9268115162849426
+scene0653_00_0 23.657684326171875 0.8058395385742188 0.20300155878067017 22.26788330078125 0.7800297141075134 0.23330746591091156 0.18238742649555206 0.0916784480214119 0.9319908618927002
+scene0653_00_1 23.03628921508789 0.8067757487297058 0.26118189096450806 24.32339096069336 0.8330462574958801 0.28576019406318665 0.22505517303943634 0.12014880776405334 0.836567759513855
+scene0653_00_2 22.425640106201172 0.7632007598876953 0.2731938660144806 22.012065887451172 0.7669206261634827 0.29709184169769287 0.2118421494960785 0.10682471096515656 0.8958743214607239
+scene0653_00_3 22.951295852661133 0.7541424036026001 0.26517918705940247 21.79049301147461 0.7452839016914368 0.3007737100124359 0.1716701239347458 0.089237742125988 0.9137080311775208
+scene0653_00_4 22.007335662841797 0.7559365034103394 0.2690209150314331 23.51068687438965 0.7647696733474731 0.27452147006988525 0.17569491267204285 0.09144022315740585 0.8998416066169739
+scene0653_00_5 22.690359115600586 0.7671948075294495 0.26748186349868774 23.03778648376465 0.7676200270652771 0.2693030536174774 0.16704468429088593 0.08965912461280823 0.9086337685585022
+scene0653_00_6 24.736164093017578 0.7889993786811829 0.19408059120178223 21.899066925048828 0.7647467851638794 0.24225659668445587 0.2324807345867157 0.11177752166986465 0.8968390226364136
+scene0653_00_7 20.236738204956055 0.7856457829475403 0.28425464034080505 20.139690399169922 0.7966742515563965 0.27715805172920227 0.11376142501831055 0.06278140842914581 0.9320985078811646
+scene0653_00_8 23.492286682128906 0.7843092083930969 0.285010427236557 22.12041664123535 0.7651880979537964 0.2734840214252472 0.16890297830104828 0.10319071263074875 0.888353168964386
+scene0653_00_9 23.402786254882812 0.791137158870697 0.2631836533546448 23.321918487548828 0.7696748375892639 0.2860929071903229 0.15273962914943695 0.08467013388872147 0.9077513217926025
+psnr_inter_avg: 25.385776105570084 ssim_inter_avg: 0.797620757657467 lpips_inter_avg: 0.26180902775866344 depth_abs_diff_avg: 0.15160087 depth_rel_diff_avg: 0.090042934 depth_delta_25_avg: 0.92150724
+psnr_extra_avg: 24.58126843770345 ssim_extra_avg: 0.7864806371075767 lpips_extra_avg: 0.28184415453246664
+num_gaussians_avg: 945518.5625
