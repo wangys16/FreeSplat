@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <p align="center">
 
   <h1 align="center">FreeSplat: Generalizable 3D Gaussian Splatting Towards Free-View Synthesis of Indoor Scenes Reconstruction</h1>
@@ -18,7 +17,7 @@
 
 <p align="center">
   <a href="">
-    <img src="./teaser/FreeSplat.jpg" alt="Logo" width="95%">
+    <img src="./teaser/teaser.png" alt="Logo" width="95%">
   </a>
 </p>
 
@@ -35,11 +34,11 @@ git clone https://github.com/wangys16/FreeSplat.git
 cd FreeSplat
 conda create -n freesplat python=3.10
 conda activate freesplat
-pip install torch==2.1.2 torchvision==0.16.2 torchaudio==2.1.2 --index-url https://download.pytorch.org/whl/cu118
+pip install torch==2.1.2 torchvision==0.16.2 torchaudio==2.1.2 --index-url https://download.pytorch.org/whl/cu121
 pip install -r requirements.txt
 ```
 
-If your system does not use CUDA 12.1 by default, see the troubleshooting tips below.
+If your system does not use CUDA 12.1 by default, see the troubleshooting tips below from [pixelSplat](https://github.com/dcharatan/pixelsplat).
 
 <details>
 <summary>Troubleshooting</summary>
@@ -66,29 +65,34 @@ LD_LIBRARY_PATH=/usr/local/cuda-12.1/lib64 pip install git+https://github.com/dc
 
 FreeSplat is trained using 100 scenes from [ScanNet](http://www.scan-net.org) following [NeRFusion](https://github.com/jetd1/NeRFusion) and [SurfelNeRF](https://github.com/TencentARC/SurfelNeRF), and evaluated on ScanNet and [Replica](https://github.com/facebookresearch/Replica-Dataset) datasets.
 
-You can download our preprocessed datasets [here](). The downloaded ScanNet should look like:
+You can download our preprocessed datasets [here](https://drive.google.com/drive/folders/1_KqJnSfNrNxSMguBwFtR1cxTPxdLG7Sc?usp=sharing). The downloaded datasets under path ```datasets/``` should look like:
 ```
-scannet
-├─ train
-│  ├─ scene0005_00
-|  ├  ├─ color (RGB images)
-│  ├  ├─ depth (depth images)
-│  ├  ├─ intrinsic (intrinsics)
-│  ├  └─ extrinsics.npy (camera extrinsics)
-│  ├─ scene0020_00
-│     ├─ ...
-├─ test
-│  ├─ ...
-├─ train_idx.txt (training scenes list)
-└─ test_idx.txt (testing scenes list)
+datasets
+├─ scannet
+│  ├─ train
+│  ├  ├─scene0005_00
+|  ├  ├  ├─ color (RGB images)
+│  ├  ├  ├─ depth (depth images)
+│  ├  ├  ├─ intrinsic (intrinsics)
+│  ├  ├  └─ extrinsics.npy (camera extrinsics)
+│  ├  ├─ scene0020_00
+│  ├  ...
+│  ├─ test
+│  ├  ├─
+│  ├  ...
+│  ├─ train_idx.txt (training scenes list)
+│  └─ test_idx.txt (testing scenes list)
+├─ replica
+│  ├─ test
+│  └─ test_idx.txt (testing scenes list)
 ```
-And Replica dataset looks similar but only with 8 testing scenes.
+And Replica dataset looks similar but only with 8 testing scenes. 
 
 Our sampled views for evaluation on different settings are in ```assets/evaluation_index_{dataset}_{N}views.json```.
 
 # Acquiring Pre-trained Checkpoints
 
-You can find our pre-trained checkpoints [here]().
+You can find our pre-trained checkpoints [here](https://drive.google.com/drive/folders/1NKmXXeyTkTeiAsnOcwmWV-1dxuBdyBTb?usp=sharing) and download them to path ```checkpoints/```.
 
 # Running the Code
 
@@ -97,13 +101,13 @@ You can find our pre-trained checkpoints [here]().
 The main entry point is `src/main.py`. To train FreeSplat on 2-views, 3-views, and FVT settings, you can respectively call:
 
 ```bash
-python3 -m src.main +experiment=scannet/2views +output_dir=2views
+python -m src.main +experiment=scannet/2views +output_dir=train_2views
 ```
 ```bash
-python3 -m src.main +experiment=scannet/3views +output_dir=3views
+python -m src.main +experiment=scannet/3views +output_dir=train_3views
 ```
 ```bash
-python3 -m src.main +experiment=scannet/fvt +output_dir=fvt
+python -m src.main +experiment=scannet/fvt +output_dir=train_fvt
 ```
 The output will be saved in path ```outputs/***```.
 
@@ -113,26 +117,29 @@ The output will be saved in path ```outputs/***```.
 To evaluate pre-trained model on the ```[N]```-views setting on ```[DATASET]```, you can call:
 
 ```bash
-python3 -m src.main +experiment=[DATASET]/[SETTING] mode=test dataset/view_sampler=evaluation checkpointing.load=[PATH_TO_CHECKPOINT] dataset.view_sampler.num_context_views=[N]
+python -m src.main +experiment=[DATASET]/[SETTING] +output_dir=[OUTPUT_PATH] mode=test dataset/view_sampler=evaluation checkpointing.load=[PATH_TO_CHECKPOINT] dataset.view_sampler.num_context_views=[N]
 ```
 
-For example, to evaluate 3-views trained FreeSplat on ScanNet 10-views setting, you can run:
+For example, to evaluate 2-views trained FreeSplat:
 
 ```bash
-python3 -m src.main +experiment=scannet/3views mode=test dataset/view_sampler=evaluation checkpointing.load=[PATH_TO_CHECKPOINT] dataset.view_sampler.num_context_views=10 model.encoder.num_views=9
+python -m src.main +experiment=scannet/2views +output_dir=test_scannet_2views mode=test dataset/view_sampler=evaluation checkpointing.load=checkpoints/2views.ckpt dataset.view_sampler.num_context_views=2
+```
+To evaluate FreeSplat-fvt on ScanNet 10-views setting, you can run:
+
+```bash
+python -m src.main +experiment=scannet/fvt +output_dir=test_scannet_fvt mode=test dataset/view_sampler=evaluation checkpointing.load=checkpoints/fvt.ckpt dataset.view_sampler.num_context_views=10 model.encoder.num_views=9
 ```
 
-We also provide a whole scene reconstruction example that you can possibly run by:
+Here ```model.encoder.num_views=9``` is to use more nearby views for more accurate depth estimation. We also provide a whole scene reconstruction example that you can possibly run by:
 ```bash
-python3 -m src.main +experiment=scannet/fvt mode=test dataset/view_sampler=evaluation checkpointing.load=[PATH_TO_CHECKPOINT] dataset.view_sampler.num_context_views=30 model.encoder.num_views=30
+python -m src.main +experiment=scannet/fvt +output_dir=test_scannet_whole mode=test dataset/view_sampler=evaluation checkpointing.load=checkpoints/fvt.ckpt dataset.view_sampler.num_context_views=30 model.encoder.num_views=30
 ```
-where ```model.encoder.num_views=30``` is to use more nearby views during cost volume formulation for more accurate depth estimation.
 
 # Camera Ready Updates
 
 1. Our current version directly uses the features extracted by the backbone to conduct multi-view matching, achieving faster training and better performance with slight GPU overhead. 
-2. For Gaussian Splatting, we now follow [https://github.com/JonathonLuiten/diff-gaussian-rasterization-w-depth](https://github.com/JonathonLuiten/diff-gaussian-rasterization-w-depth) for more accurate depth rendering.
-3. We updated MVSplat's results after more careful hyperparameter tuning. Currently, FreeSplat still outperforms MVSplat on all settings and can easily perform longer sequence reconstruction.
+2. For Gaussian Splatting codebase, we now follow [diff-gaussian-rasterization-w-depth](https://github.com/JonathonLuiten/diff-gaussian-rasterization-w-depth) for more accurate depth rendering.
 
 
 # BibTeX
@@ -148,7 +155,6 @@ If you find our work helpful, please consider citing our paper. Thank you!
 
 # Acknowledgements
 
+Our code is largely based on [pixelSplat](https://github.com/dcharatan/pixelsplat), and our implementation also referred to [SimpleRecon](https://github.com/nianticlabs/simplerecon) and [MVSplat](https://github.com/donydchen/mvsplat). Thanks for their great works!
+
 This work is supported by the Agency for Science, Technology and Research (A*STAR) under its MTC Programmatic Funds (Grant No. M23L7b0021).
-=======
-# test_freesplat
->>>>>>> 32445ed3ca1edad1f978d5c661e2a3b62f77ec3f
