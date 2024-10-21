@@ -63,7 +63,7 @@ LD_LIBRARY_PATH=/usr/local/cuda-12.1/lib64 pip install git+https://github.com/dc
 
 # Acquiring Datasets
 
-FreeSplat is trained using 100 scenes from [ScanNet](http://www.scan-net.org) following [NeRFusion](https://github.com/jetd1/NeRFusion) and [SurfelNeRF](https://github.com/TencentARC/SurfelNeRF), and evaluated on ScanNet and [Replica](https://github.com/facebookresearch/Replica-Dataset) datasets.
+FreeSplat is trained using about 100 scenes from [ScanNet](http://www.scan-net.org) following [NeRFusion](https://github.com/jetd1/NeRFusion) and [SurfelNeRF](https://github.com/TencentARC/SurfelNeRF), and evaluated on ScanNet and [Replica](https://github.com/facebookresearch/Replica-Dataset) datasets.
 
 You can download our preprocessed datasets [here](https://drive.google.com/drive/folders/1_KqJnSfNrNxSMguBwFtR1cxTPxdLG7Sc?usp=sharing). The downloaded datasets under path ```datasets/``` should look like:
 ```
