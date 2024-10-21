@@ -56,6 +56,8 @@ test:
 
 seed: 111123
 
+strict: true
+
 trainer:
   max_steps: -1
   val_check_interval: 5000

@@ -18,3 +18,5 @@ def set_cfg(new_cfg: DictConfig) -> None:
 def get_seed() -> int:
     return cfg.seed
 
+def get_strict() -> bool:
+    return cfg.strict

@@ -50,6 +50,7 @@ class RootCfg:
     train: TrainCfg
     seed: int
     output_dir: str
+    strict: bool = True
 
 
 TYPE_HOOKS = {
