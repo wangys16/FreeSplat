@@ -12,7 +12,7 @@ wandb:
 
 dataset:
   image_shape: [384, 512]
-  roots: [PATH_TO_REPLICA]
+  roots: [datasets/replica]
   near: 0.5
   far: 15.
   view_sampler:
