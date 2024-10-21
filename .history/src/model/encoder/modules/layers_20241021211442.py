@@ -48,7 +48,11 @@ class BasicBlock(nn.Module):
         # Both self.conv1 and self.downsample layers downsample the input when stride != 1
         self.conv1 = conv3x3(inplanes, planes, stride, bias=bias)
         self.bn1 = norm_layer(planes)
+        # self.relu = nn.ReLU(inplace=True)
         self.relu = nn.LeakyReLU(0.2, inplace=True)
+        # self.relu = nn.ReLU6(True)
+        # self.relu = nn.SiLU(inplace=True)
+        # self.relu = nn.ELU(inplace=True)
         self.conv2 = conv3x3(planes, planes, bias=bias)
         self.bn2 = norm_layer(planes)
         if inplanes == planes * self.expansion and stride == 1:
@@ -70,6 +74,7 @@ class BasicBlock(nn.Module):
 
         out = self.conv2(out)
         out = self.bn2(out)
+        # out = self.se(out)
 
         if self.downsample is not None:
             identity = self.downsample(x)
