@@ -58,13 +58,6 @@ class DatasetScannet(Dataset):
 
         # Collect chunks.
         self.chunks = []
-        if not os.path.exists(cfg.roots[0]):
-            if os.path.exists('/home/wang/ssd/scannet/scannet_surn/scannet'):
-                cfg.roots[0] = Path('/home/wang/ssd/scannet/scannet_surn/scannet')
-            elif os.path.exists('/ssd/yswang/scannet'):
-                cfg.roots[0] = Path('/ssd/yswang/scannet')
-            elif os.path.exists('/dataset/yswang/data/scannet/scannet'):
-                cfg.roots[0] = Path('/dataset/yswang/data/scannet/scannet')
         
         print('-'*20 + f'data root: {cfg.roots[0]}')
         if self.data_stage != 'test':

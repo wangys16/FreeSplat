@@ -25,9 +25,6 @@ import numpy as np
 import os
 from PIL import Image
 
-from torch.utils.data import get_worker_info
-from torch.distributed import init_process_group, get_rank, get_world_size
-
 
 class DatasetReplica(Dataset):
     cfg: DatasetReplicaCfg
@@ -51,12 +48,7 @@ class DatasetReplica(Dataset):
 
         # Collect chunks.
         self.chunks = []
-        if not os.path.exists(cfg.roots[0]):
-            if os.path.exists('/home/wang/ssd/replica/ps'):
-                cfg.roots[0] = Path('/home/wang/ssd/replica/ps')
-            elif os.path.exists('/ssd/yswang/replica/ps'):
-                cfg.roots[0] = Path('/ssd/yswang/replica/ps')
-        if self.data_stage not in ['test', 'test_fvs']:
+        if self.data_stage != 'test':
             for root in cfg.roots:
                 root = root / self.data_stage
                 root_chunks = sorted(
@@ -68,17 +60,12 @@ class DatasetReplica(Dataset):
             self.chunks = sorted(
                     [root / path for path in self.index]
                 )
-        if self.cfg.overfit_to_scene is not None:
-            chunk_path = self.index[self.cfg.overfit_to_scene]
-            self.chunks = [chunk_path] * len(self.chunks)
 
     def shuffle(self, lst: list) -> list:
         indices = torch.randperm(len(lst))
         return [lst[x] for x in indices]
 
     def __getitem__(self, idx):
-        # Chunks must be shuffled here (not inside __init__) for validation to show
-        # random chunks.
 
         path = self.chunks[idx]
         scene = str(path).split('/')[-1]

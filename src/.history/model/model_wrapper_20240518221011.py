@@ -551,15 +551,15 @@ class ModelWrapper(LightningModule):
         )
         filename = 'test_fvs_idx.txt' if self.test_fvs else 'test_idx.txt'
         if 'scannet' in self.dataset_name:
-            if os.path.exists(f'/home/wang/ssd/scannet/scannet_surn/scannet/{filename}'):
-                path = '/home/wang/ssd/scannet/scannet_surn/scannet'
+            if os.path.exists(f'datasets/scannet/{filename}'):
+                path = 'datasets/scannet'
             elif os.path.exists(f'/ssd/yswang/scannet/{filename}'):
                 path = '/ssd/yswang/scannet'
             elif os.path.exists(f'/data/yswang/data/scannet/scannet/{filename}'):
                 path = '/data/yswang/data/scannet/scannet'
         elif 'replica' in self.dataset_name:
-            if os.path.exists('/home/wang/ssd/replica/ps'):
-                path = Path('/home/wang/ssd/replica/ps')
+            if os.path.exists('PATH_TO_REPLICA'):
+                path = Path('PATH_TO_REPLICA')
             elif os.path.exists('/ssd/yswang/replica/ps'):
                 path = Path('/ssd/yswang/replica/ps')
         with open(f'{path}/{filename}', 'r') as f:

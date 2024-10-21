@@ -110,7 +110,6 @@ class GaussianAdapterCfg:
     gaussian_scale_min: float
     gaussian_scale_max: float
     sh_degree: int
-    depth_sup: bool = False
     load_depth: bool = False
 
 

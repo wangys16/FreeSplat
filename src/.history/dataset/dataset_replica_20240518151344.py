@@ -61,8 +61,8 @@ class DatasetReplica(Dataset):
         # Collect chunks.
         self.chunks = []
         if not os.path.exists(cfg.roots[0]):
-            if os.path.exists('/home/wang/ssd/replica/ps'):
-                cfg.roots[0] = Path('/home/wang/ssd/replica/ps')
+            if os.path.exists('PATH_TO_REPLICA'):
+                cfg.roots[0] = Path('PATH_TO_REPLICA')
             elif os.path.exists('/ssd/yswang/replica/ps'):
                 cfg.roots[0] = Path('/ssd/yswang/replica/ps')
         if self.data_stage not in ['test', 'test_fvs']:

@@ -14,7 +14,7 @@ colorspacious
 matplotlib
 moviepy
 imageio
-https://github.com/JonathonLuiten/diff-gaussian-rasterization-w-depth
+git+https://github.com/JonathonLuiten/diff-gaussian-rasterization-w-depth
 timm
 dacite
 lpips
@@ -22,3 +22,6 @@ e3nn
 plyfile
 tabulate
 svg.py
+hydra-core
+mmcv
+kornia==0.6.7

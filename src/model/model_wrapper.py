@@ -539,7 +539,6 @@ class ModelWrapper(LightningModule):
                     depth_mode='depth',
                 ))
             output_probabilistic = DecoderOutput(None, None)
-            # try:
             output_probabilistic.color = torch.cat([x.color for x in output_probabilistic_list], dim=0)
             try:
                 output_probabilistic.depth = torch.cat([x.depth for x in output_probabilistic_list], dim=0)
@@ -599,36 +598,21 @@ class ModelWrapper(LightningModule):
                         pred_depth_figs.append(torch.from_numpy(convert_array_to_pil(mmcv.imresize(encoder_probabilistic_results[f"depth_num0_s-1"][0][i].cpu().numpy().reshape(h//(2**(s+1)), w//(2**(s+1))), (w,h),interpolation='nearest'))\
                                                                         .transpose(2,0,1).astype(np.float32)/255).to(batch["context"]["image"][0].device))
 
-            if output_dr is not None:
-                context_depth_render_figs = []
-                for fig in output_dr.depth[0]:
-                    context_depth_render_figs.append(torch.from_numpy(convert_array_to_pil(mmcv.imresize(fig.cpu().numpy(), (w,h),interpolation='nearest')).transpose(2,0,1)\
-                                                            .astype(np.float32)/255).to(batch["context"]["image"][0].device))
+            try:
                 comparison = hcat(
-                        add_label(vcat(*context_figs), "Context"),
-                        add_label(vcat(*context_depth_figs), "Context GT Depths"),
-                        add_label(vcat(*pred_depth_figs), "Depths Predictions"),
-                        add_label(vcat(*context_depth_render_figs), "Context Rendered Depths"),
-                        add_label(vcat(*rgb_gt), "Target (Ground Truth)"),
-                        add_label(vcat(*rgb_probabilistic), "Target (Predictions)"),
-                    )
-                
-            else:
-                try:
-                    comparison = hcat(
+                add_label(vcat(*context_figs), "Context"),
+                add_label(vcat(*context_depth_figs), "Context GT Depths"),
+                add_label(vcat(*pred_depth_figs), "Depths Predictions"),
+                add_label(vcat(*rgb_gt), "Target (Ground Truth)"),
+                add_label(vcat(*rgb_probabilistic), "Target (Predictions)"),
+            )
+            except:
+                comparison = hcat(
                     add_label(vcat(*context_figs), "Context"),
-                    add_label(vcat(*context_depth_figs), "Context GT Depths"),
                     add_label(vcat(*pred_depth_figs), "Depths Predictions"),
                     add_label(vcat(*rgb_gt), "Target (Ground Truth)"),
                     add_label(vcat(*rgb_probabilistic), "Target (Predictions)"),
                 )
-                except:
-                    comparison = hcat(
-                        add_label(vcat(*context_figs), "Context"),
-                        add_label(vcat(*pred_depth_figs), "Depths Predictions"),
-                        add_label(vcat(*rgb_gt), "Target (Ground Truth)"),
-                        add_label(vcat(*rgb_probabilistic), "Target (Predictions)"),
-                    )
         self.logger.log_image(
             "comparison",
             [prep_image(add_border(comparison))],
