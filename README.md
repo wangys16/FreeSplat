@@ -86,7 +86,6 @@ datasets
 │  ├─ test
 │  └─ test_idx.txt (testing scenes list)
 ```
-And Replica dataset looks similar but only with 8 testing scenes. 
 
 Our sampled views for evaluation on different settings are in ```assets/evaluation_index_{dataset}_{N}views.json```.
 
