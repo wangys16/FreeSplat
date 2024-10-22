@@ -1,6 +1,0 @@
-- +experiment=scannet/2views
-- +output_dir=test_scannet_2views
-- mode=test
-- dataset/view_sampler=evaluation
-- checkpointing.load=../checkpoints/2views.ckpt
-- dataset.view_sampler.num_context_views=2
