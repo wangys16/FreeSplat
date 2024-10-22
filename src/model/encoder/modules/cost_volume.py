@@ -362,7 +362,6 @@ class CostVolumeManager(nn.Module):
             max_depth, 
             depth_planes_bdhw=None, 
             return_mask=False,
-            context_images = None,
         ):
         """ Runs the cost volume and gets the lowest cost result """
         cost_volume, depth_planes_bdhw, overall_mask_bhw = \
@@ -377,7 +376,6 @@ class CostVolumeManager(nn.Module):
                                         max_depth=max_depth,
                                         depth_planes_bdhw=depth_planes_bdhw,
                                         return_mask = return_mask,
-                                        context_images = context_images,
                                     )
 
     

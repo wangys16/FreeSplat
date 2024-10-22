@@ -85,15 +85,12 @@ def set_bn_eval(m):
 class EncoderFreeSplatCfg:
     name: Literal["freesplat"]
     d_feature: int
-    num_monocular_samples: int
     num_surfaces: int
     backbone: BackboneCfg
     visualizer: EncoderVisualizerEpipolarCfg
-    near_disparity: float
     gaussian_adapter: GaussianAdapterCfg
     opacity_mapping: OpacityMappingCfg
     gaussians_per_pixel: int
-    use_transmittance: bool
     
     num_depth_candidates: int = 64
     num_views: int = 2

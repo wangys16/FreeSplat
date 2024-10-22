@@ -8,10 +8,8 @@ opacity_mapping:
   final: 0.0
   warm_up: 1
 
-num_monocular_samples: 32
 num_surfaces: 1
 predict_opacity: false
-near_disparity: 3.0
 
 gaussians_per_pixel: 3
 
@@ -27,10 +25,7 @@ visualizer:
   min_resolution: 256
   export_ply: false
 
-apply_bounds_shim: false
-
 use_epipolar_transformer: false
 
 use_transmittance: false
 
-est_depth: "cost"

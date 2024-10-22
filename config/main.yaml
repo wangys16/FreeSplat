@@ -3,12 +3,12 @@ defaults:
   - optional dataset/view_sampler_dataset_specific_config: ${dataset/view_sampler}_${dataset}
   - model/encoder: epipolar
   - model/decoder: splatting_cuda
-  - loss: [mse, density]
+  - loss: [mse]
 
 output_dir: null
 
 wandb:
-  project: pixelsplat
+  project: freesplat
   entity: placeholder
   name: placeholder
   mode: offline
