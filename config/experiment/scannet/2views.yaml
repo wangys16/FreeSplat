@@ -12,7 +12,8 @@ wandb:
 
 dataset:
   image_shape: [384, 512]
-  roots: [datasets/scannet]
+  # roots: [datasets/scannet]
+  roots: [/home/wang/ssd/scannet/scannet_surn/scannet]
   near: 0.5
   far: 15.
   view_sampler:

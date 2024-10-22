@@ -1,5 +1,5 @@
 defaults:
-  - backbone: resnet
+  - backbone: efficientnet
 
 name: freesplat
 
@@ -9,9 +9,6 @@ opacity_mapping:
   warm_up: 1
 
 num_surfaces: 1
-predict_opacity: false
-
-gaussians_per_pixel: 3
 
 gaussian_adapter:
   gaussian_scale_min: 0.5
@@ -24,8 +21,3 @@ visualizer:
   num_samples: 8
   min_resolution: 256
   export_ply: false
-
-use_epipolar_transformer: false
-
-use_transmittance: false
-

@@ -90,7 +90,6 @@ class EncoderFreeSplatCfg:
     visualizer: EncoderVisualizerEpipolarCfg
     gaussian_adapter: GaussianAdapterCfg
     opacity_mapping: OpacityMappingCfg
-    gaussians_per_pixel: int
     
     num_depth_candidates: int = 64
     num_views: int = 2
@@ -213,7 +212,6 @@ class EncoderFreeSplat(Encoder[EncoderFreeSplatCfg]):
         # Apply training mode only to batch normalization layers
         self.backbone.apply(set_bn_eval)
         context['image_shape'] = (h, w)
-        self.cfg.gaussians_per_pixel = 1
         context_intrinsics = context['intrinsics'].clone()
         context_intrinsics[:,:,0] *= (w // 4)
         context_intrinsics[:,:,1] *= (h // 4)
