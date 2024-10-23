@@ -11,7 +11,7 @@
 
   <h2 align="center">NeurIPS 2024</h2>
 
-  <h3 align="center"><a href="https://arxiv.org/pdf/2405.17958">arXiv</a>
+  <h3 align="center"><a href="https://arxiv.org/pdf/2405.17958">arXiv</a> | <a href="https://wangys16.github.io/FreeSplat-project/">Project Page</a>  </h3>
   <div align="center"></div>
 </p>
 
