@@ -11,7 +11,7 @@
 
   <h2 align="center">NeurIPS 2024</h2>
 
-  <h3 align="center"><a href="https://arxiv.org/pdf/2405.17958">arXiv</a>
+  <h3 align="center"><a href="https://arxiv.org/pdf/2405.17958">arXiv</a> | <a href="https://wangys16.github.io/FreeSplat-project/">Project Page</a>  </h3>
   <div align="center"></div>
 </p>
 
@@ -155,5 +155,3 @@ If you find our work helpful, please consider citing our paper. Thank you!
 # Acknowledgements
 
 Our code is largely based on [pixelSplat](https://github.com/dcharatan/pixelsplat), and our implementation also referred to [SimpleRecon](https://github.com/nianticlabs/simplerecon) and [MVSplat](https://github.com/donydchen/mvsplat). Thanks for their great works!
-
-This work is supported by the Agency for Science, Technology and Research (A*STAR) under its MTC Programmatic Funds (Grant No. M23L7b0021).
