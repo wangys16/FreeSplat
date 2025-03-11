@@ -21,6 +21,9 @@
   </a>
 </p>
 
+# News
+We have introduced an enhanced version, FreeSplat++, to specifically focus on feed-forward whole scene reconstruction with 3D Gaussians. The project page is <a href="https://wangys16.github.io/FreeSplatPP-Page/">here</a>. The Arxiv paper will be uploaded recently.
+
 # Abstract
 
 FreeSplat is a generalizable 3DGS method for indoor scene reconstruction, which leverages low-cost 2D backbones for feature extraction and cost volume for multi-view aggregation. Furthermore, FreeSplat proposes a Pixel-wise Triplet Fusion (PTF) module to merge multi-view 3D Gaussians, such that to remove those redundant ones and provide point-level latent fusion and regularization on Gaussian localization. FreeSplat shows consistent quality and efficiency improvements especially when given large numbers of input views.
