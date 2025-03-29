@@ -26,7 +26,7 @@ from PIL import Image
 
 @dataclass
 class DatasetScannetCfg(DatasetCfgCommon):
-    name: Literal["scannet", "replica"]
+    name: Literal["scannet", "replica", "re10k", "acid"]
     roots: list[Path]
     baseline_epsilon: float
     max_fov: float

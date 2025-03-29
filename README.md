@@ -22,11 +22,17 @@
 </p>
 
 # 🌏 News
-We have introduced an enhanced version, ***FreeSplat++***, to specifically focus on feed-forward whole scene reconstruction with 3D Gaussians. The project page is <a href="https://wangys16.github.io/FreeSplatPP-Page/">here</a>. The Arxiv paper will be uploaded recently.
+[1] We have introduced an enhanced version, ***FreeSplat++***, to specifically focus on feed-forward whole scene reconstruction with 3D Gaussians. The project page is <a href="https://wangys16.github.io/FreeSplatPP-Page/">here</a>. The Arxiv paper will be uploaded recently.
+
+[2] We updated the code for training evaluation on RE10K dataset.
+
+<br>
 
 # 📃 Abstract
 
 FreeSplat is a generalizable 3DGS method for indoor scene reconstruction, which leverages low-cost 2D backbones for feature extraction and cost volume for multi-view aggregation. Furthermore, FreeSplat proposes a Pixel-wise Triplet Fusion (PTF) module to merge multi-view 3D Gaussians, such that to remove those redundant ones and provide point-level latent fusion and regularization on Gaussian localization. FreeSplat shows consistent quality and efficiency improvements especially when given large numbers of input views.
+
+<br>
 
 # 📌 Installation
 
@@ -64,11 +70,13 @@ LD_LIBRARY_PATH=/usr/local/cuda-12.1/lib64 pip install git+https://github.com/dc
 ```
 </details>
 
+<br>
+
 # 📁 Acquiring Datasets
 
 FreeSplat is trained using about 100 scenes from [ScanNet](http://www.scan-net.org) following [NeRFusion](https://github.com/jetd1/NeRFusion) and [SurfelNeRF](https://github.com/TencentARC/SurfelNeRF), and evaluated on ScanNet and [Replica](https://github.com/facebookresearch/Replica-Dataset) datasets.
 
-You can download our preprocessed datasets [here](https://drive.google.com/drive/folders/1_KqJnSfNrNxSMguBwFtR1cxTPxdLG7Sc?usp=sharing). The downloaded datasets under path ```datasets/``` should look like:
+You can download our preprocessed ScanNet and Replica [here](https://drive.google.com/drive/folders/1_KqJnSfNrNxSMguBwFtR1cxTPxdLG7Sc?usp=sharing). For RE10K and ACID downloading, you should follow [pixelSplat](https://github.com/dcharatan/pixelsplat). The downloaded datasets under path ```datasets/``` should look like:
 ```
 datasets
 ├─ scannet
@@ -88,6 +96,12 @@ datasets
 ├─ replica
 │  ├─ test
 │  └─ test_idx.txt (testing scenes list)
+├─ re10k
+│  ├─ train
+│  ├─ test
+├─ acid
+│  ├─ train
+│  ├─ test
 ```
 
 Our sampled views for evaluation on different settings are in ```assets/evaluation_index_{dataset}_{N}views.json```.
@@ -96,9 +110,11 @@ Our sampled views for evaluation on different settings are in ```assets/evaluati
 
 You can find our pre-trained checkpoints [here](https://drive.google.com/drive/folders/1NKmXXeyTkTeiAsnOcwmWV-1dxuBdyBTb?usp=sharing) and download them to path ```checkpoints/```.
 
+
 # 🎮 Running the Code
 
 ## Training
+### ScanNet
 
 The main entry point is `src/main.py`. To train FreeSplat on 2-views, 3-views, and FVT settings, you can respectively call:
 
@@ -113,8 +129,18 @@ python -m src.main +experiment=scannet/fvt +output_dir=train_fvt
 ```
 The output will be saved in path ```outputs/***```.
 
+### RE10K
+To train on RE10K, you can use: 
+```bash
+python -m src.main +experiment=re10k/2views +output_dir=train_re10k_2views
+``` 
+```bash
+python -m src.main +experiment=re10k/fvt +output_dir=train_re10k_fvt
+```
+to train on 2-views or FVT setting.
 
 ## Evaluation
+### ScanNet and Replica
 
 To evaluate pre-trained model on the ```[N]```-views setting on ```[DATASET]```, you can call:
 
@@ -138,10 +164,21 @@ Here ```model.encoder.num_views=9``` is to use more nearby views for more accura
 python -m src.main +experiment=scannet/fvt +output_dir=test_scannet_whole mode=test dataset/view_sampler=evaluation checkpointing.load=checkpoints/fvt.ckpt dataset.view_sampler.num_context_views=30 model.encoder.num_views=30
 ```
 
+### RE10K
+
+To evaluate 2-views results of your trained ```re10k_2views.ckpt``` checkpoint on RE10K, you can run:
+```bash
+python -m src.main +experiment=re10k/2views +output_dir=test_re10k_2views dataset/view_sampler=evaluation checkpointing.load=checkpoints/re10k_2views.ckpt dataset.view_sampler.num_context_views=2
+```
+<br>
+
 # Camera Ready Updates
 
 1. Our current version directly uses the features extracted by the backbone to conduct multi-view matching, achieving faster training and better performance with slight GPU overhead. 
 2. For Gaussian Splatting codebase, we now follow [diff-gaussian-rasterization-w-depth](https://github.com/JonathonLuiten/diff-gaussian-rasterization-w-depth) for more accurate depth rendering.
+
+
+<br>
 
 
 # 🖊 BibTeX

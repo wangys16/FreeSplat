@@ -89,7 +89,7 @@ def compute_metrics(rgb_gt, rgb):
 # Compute Depth metrics at novel views.
 def depth_render_metrics(prediction, batch) -> Float[Tensor, ""]:
     if not 'depth' in batch['target']:
-        return torch.tensor(0.0), torch.tensor(0.0), torch.tensor(0.0)
+        return torch.tensor(0.0), torch.tensor(0.0), torch.tensor(0.0), torch.tensor(0.0)
     target = batch['target']['depth'].squeeze(2)
     gt_bN = rearrange(target.clone(), 'b v h w -> (b v) (h w)')
     pred_bN = rearrange(prediction.depth.clone(), 'b v h w -> (b v) (h w)')
