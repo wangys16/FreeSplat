@@ -22,7 +22,7 @@
 </p>
 
 # 🌏 News
-[1] We have introduced an enhanced version, ***FreeSplat++***, to specifically focus on feed-forward whole scene reconstruction with 3D Gaussians. Please check its [Project page](https://wangys16.github.io/FreeSplatPP-Page/), [Arxiv](https://arxiv.org/pdf/2503.22986) and [Code](https://github.com/wangys16/FreeSplatPP).
+[1] We have introduced an enhanced version, ***FreeSplat++***, to specifically focus on feed-forward whole scene reconstruction with 3D Gaussians. You may want to take a look at its [Project page](https://wangys16.github.io/FreeSplatPP-Page/), [Arxiv](https://arxiv.org/pdf/2503.22986) and [Code](https://github.com/wangys16/FreeSplatPP).
 
 [2] We updated the code for training evaluation on RE10K dataset.
 
