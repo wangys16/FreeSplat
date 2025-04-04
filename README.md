@@ -182,7 +182,17 @@ python -m src.main +experiment=re10k/2views +output_dir=test_re10k_2views datase
 
 
 # 🖊 BibTeX
-If you find our work helpful, please consider citing our paper. Thank you!
+If you find our work helpful, please consider citing our papers. Thank you!
+
+```
+@article{wang2025freesplat++,
+  title={FreeSplat++: Generalizable 3D Gaussian Splatting for Efficient Indoor Scene Reconstruction},
+  author={Wang, Yunsong and Huang, Tianxin and Chen, Hanlin and Lee, Gim Hee},
+  journal={arXiv preprint arXiv:2503.22986},
+  year={2025}
+}
+```
+
 ```
 @article{wang2024freesplat,
   title={FreeSplat: Generalizable 3D Gaussian Splatting Towards Free-View Synthesis of Indoor Scenes},
