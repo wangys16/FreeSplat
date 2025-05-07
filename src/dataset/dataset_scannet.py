@@ -75,6 +75,7 @@ class DatasetScannet(Dataset):
         if self.cfg.overfit_to_scene is not None:
             chunk_path = self.index[self.cfg.overfit_to_scene]
             self.chunks = [chunk_path] * len(self.chunks)
+        
 
     def shuffle(self, lst: list) -> list:
         indices = torch.randperm(len(lst))

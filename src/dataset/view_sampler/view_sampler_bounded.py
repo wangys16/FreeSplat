@@ -21,14 +21,42 @@ class ViewSamplerBoundedCfg:
     warm_up_steps: int
     initial_min_distance_between_context_views: int
     initial_max_distance_between_context_views: int
+    max_steps: int = 300_001
     random: bool = False
     extra: bool = False
 
 
 class ViewSamplerBounded(ViewSampler[ViewSamplerBoundedCfg]):
+    def __init__(
+        self,
+        cfg,
+        stage,
+        is_overfitting,
+        cameras_are_circular,
+        step_tracker,
+    ) -> None:
+        self.cfg = cfg
+        self.stage = stage
+        self.is_overfitting = is_overfitting
+        self.cameras_are_circular = cameras_are_circular
+        self.step_tracker = step_tracker
+
+        if self.cfg.random:
+            self.random_views = np.random.randint(2, self.cfg.num_context_views+1, size=(cfg.max_steps,))
+
     def schedule(self, initial: int, final: int) -> int:
         fraction = self.global_step / self.cfg.warm_up_steps
+
         return min(initial + int((final - initial) * fraction), final)
+    
+    def _update_random_views(self):
+        # print(f'global_step: {self.global_step}, prev_global_step: {self.prev_global_step}')
+        if self.global_step > self.prev_global_step:
+            self.random_views = np.random.randint(2, self.cfg.num_context_views+1)
+    
+            self.prev_global_step = self.global_step
+            
+        # print(f'num_context_views: {self.random_views}')
 
     def sample(
         self,
@@ -70,10 +98,15 @@ class ViewSamplerBounded(ViewSampler[ViewSamplerBoundedCfg]):
             device=device,
         ).item()
 
+        # if self.cfg.random:
+        #     num_context_views = np.random.randint(2, self.num_context_views+1)
+        # else:
+        #     num_context_views = self.num_context_views
         if self.cfg.random:
-            num_context_views = np.random.randint(2, self.num_context_views+1)
+            num_context_views = self.random_views[self.global_step]
         else:
-            num_context_views = self.num_context_views
+            num_context_views = self.cfg.num_context_views
+        
         if (num_context_views > (num_views-1) // context_gap + 1) and not self.cfg.random:
             raise ValueError("Not enough views for the context views!")
         num_context_views = min(num_context_views, (num_views-1) // context_gap + 1)

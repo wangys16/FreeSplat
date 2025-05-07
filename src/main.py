@@ -109,6 +109,8 @@ def train(cfg_dict: DictConfig):
         check_val_every_n_epoch=None,
     )
 
+    cfg.dataset.view_sampler.max_steps = cfg.trainer.max_steps
+
     encoder, encoder_visualizer = get_encoder(cfg.model.encoder, 
                         depth_range=[cfg.dataset.near, cfg.dataset.far])
     cfg.test.output_path = output_dir
