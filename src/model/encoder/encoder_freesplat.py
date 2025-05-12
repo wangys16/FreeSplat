@@ -305,16 +305,19 @@ class EncoderFreeSplat(Encoder[EncoderFreeSplatCfg]):
                                         device=gaussians_feats.device)
         xy_ray = xy_ray + offset_xy
 
-        coords.append(self.gaussian_adapter.forward(
-                rearrange(context["extrinsics"], "b v i j -> b v () () () i j"),
-                rearrange(context["intrinsics"], "b v i j -> b v () () () i j"),
-                rearrange(xy_ray, "b v r srf xy -> b v r srf () xy"),
-                depths,
-                densities,
-                gaussians_feats,
-                (h, w),
-                fusion=True,
-            ))
+        coords = []
+        for i in range(b):
+            coords.append(self.gaussian_adapter.forward(
+                    rearrange(context["extrinsics"][i:i+1], "b v i j -> b v () () () i j"),
+                    rearrange(context["intrinsics"][i:i+1], "b v i j -> b v () () () i j"),
+                    rearrange(xy_ray[i:i+1], "b v r srf xy -> b v r srf () xy"),
+                    depths[i:i+1],
+                    densities[i:i+1],
+                    gaussians_feats[i:i+1],
+                    (h, w),
+                    fusion=True,
+                ))
+        coords = [torch.cat(coords, dim=0)]
         gaussians.append(gaussians_feats)
 
         results[f'depth_num0_s-1'] = depths

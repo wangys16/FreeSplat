@@ -262,6 +262,11 @@ class ModelWrapper(LightningModule):
                 pass
         output_dr = None
         target_gt = batch["target"]["image"]
+        
+        # for index, color in zip(batch["target"]["index"][0], output.color[0]):
+        #     # print('saving image to ', path / scene / f"color/{index:0>6}.png")
+        #     save_image(color, Path(f"outputs/debug/{index:0>6}.png"))
+        # exit(0)
 
         psnr_probabilistic = compute_psnr(
             rearrange(target_gt, "b v c h w -> (b v) c h w"),
@@ -371,9 +376,12 @@ class ModelWrapper(LightningModule):
         self.benchmarker.store('depth_delta_25', float(delta_25.detach().cpu().numpy()))
         self.benchmarker.store('depth_delta_10', float(delta_10.detach().cpu().numpy()))
 
-        fvs_length = batch["target"]["test_fvs"]
-        test_fvs = fvs_length > 0
-            
+        try:
+            fvs_length = batch["target"]["test_fvs"]
+            test_fvs = fvs_length > 0
+        except:
+            test_fvs = False
+                
         count = 0
         for i, index, fig in zip(range(len(batch["context"]["index"][0])), batch["context"]["index"][0], batch["context"]["image"][0]):
             length = len(encoder_results[f"depth_num0_s-1"][0])
