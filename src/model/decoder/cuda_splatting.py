@@ -2,7 +2,7 @@ from math import isqrt
 from typing import Literal
 
 import torch
-from diff_gaussian_rasterization import (
+from diff_gaussian_rasterization_depth import (
     GaussianRasterizationSettings,
     GaussianRasterizer,
 )
@@ -109,6 +109,7 @@ def render_cuda(
             sh_degree=degree,
             campos=extrinsics[i, :3, 3],
             prefiltered=False,  # This matches the original usage.
+            debug=False,
         )
         rasterizer = GaussianRasterizer(settings)
 
@@ -116,7 +117,7 @@ def render_cuda(
 
         # change to with torch... that supports float32 mode
         
-        image, radii, depth = rasterizer(
+        image, radii, depth, _ = rasterizer(
             means3D=gaussian_means[i],
             means2D=mean_gradients,
             shs=shs[i] if use_sh else None,
@@ -124,6 +125,7 @@ def render_cuda(
             opacities=gaussian_opacities[i, ..., None],
             cov3D_precomp=gaussian_covariances[i, :, row, col],
         )
+        depth = depth.unsqueeze(0)
         all_images.append(image)
         all_radii.append(radii)
         all_depths.append(depth)

@@ -24,10 +24,11 @@ model:
     num_depth_candidates: 128
     image_H: 256
     image_W: 256
+    log_planes: False
 
 data_loader:
   train:
-    batch_size: 14
+    batch_size: 1
 
 loss:
   lpips:
@@ -36,7 +37,11 @@ loss:
 
 trainer:
   max_steps: 300_001
+  gradient_clip_val: 0.05
 
 train:
   depth_sup: true
   depth_mode: depth
+
+optimizer:
+  lr: 1.e-4

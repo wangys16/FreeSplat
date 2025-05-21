@@ -119,7 +119,7 @@ class ViewSamplerBounded(ViewSampler[ViewSamplerBoundedCfg]):
         return (
             torch.tensor(context_views, dtype=torch.int64, device=device),
             torch.cat(index_target),
-            0
+            0,
         )
 
     @property

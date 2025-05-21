@@ -39,6 +39,8 @@ class ViewSamplerEvaluation(ViewSampler[ViewSamplerEvaluationCfg]):
             index_path = Path(str(index_path).replace('scannet.json', f'scannet_{cfg.num_context_views}views.json'))
         elif 'replica' in str(index_path):
             index_path = Path(str(index_path).replace('replica.json', f'replica_{cfg.num_context_views}views.json'))
+        elif 're10k' in str(index_path):
+            index_path = Path(str(index_path).replace('re10k.json', f're10k_{cfg.num_context_views}views.json'))
         
         print('-'*20 + 'index_path:', cfg.index_path)
         

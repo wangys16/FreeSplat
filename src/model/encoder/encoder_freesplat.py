@@ -96,6 +96,8 @@ class EncoderFreeSplatCfg:
     image_H: int = 384
     image_W: int = 512
 
+    log_planes: bool = True
+
 class EncoderFreeSplat(Encoder[EncoderFreeSplatCfg]):
     backbone: Backbone
     backbone_projection: nn.Sequential
@@ -166,7 +168,8 @@ class EncoderFreeSplat(Encoder[EncoderFreeSplatCfg]):
                                             num_output_channels=1+64,
                                             near=depth_range[0],
                                             far=depth_range[1],
-                                            num_samples=self.cfg.num_depth_candidates,)
+                                            num_samples=self.cfg.num_depth_candidates,
+                                            log_planes=self.cfg.log_planes,)
         self.max_depth = 4
         self.tensor_formatter = TensorFormatter()
 
@@ -222,7 +225,11 @@ class EncoderFreeSplat(Encoder[EncoderFreeSplatCfg]):
         cur_extrinsics = context['extrinsics'].gather(dim=1, index=cur_indices.view(1,-1,1,1).repeat(b,1,4,4))
         cur_image = context['image'].gather(dim=1, index=cur_indices.view(1,-1,1,1,1).repeat(b,1,3,h,w)).view(-1,3,h,w)
 
-        cur_feats = self.backbone(cur_image)
+        cur_feats = []
+        for bb in range(b):
+            cur_feats.append(self.backbone(cur_image[bb*n_views:(bb+1)*n_views]))
+        
+        cur_feats = [torch.cat([x[l] for x in cur_feats], dim=0) for l in range(len(cur_feats[0]))]
 
         full_indices = torch.arange(n_views, device=context['image'].device)[None].repeat(n_views,1)
         
@@ -268,7 +275,7 @@ class EncoderFreeSplat(Encoder[EncoderFreeSplatCfg]):
 
         near = context["near"][:1,0].type_as(src_K).view(1, 1, 1, 1)
         far = context["far"][:1,0].type_as(src_K).view(1, 1, 1, 1)
-
+        
 
         cost_volume = self.cost_volume(cur_feats=matching_cur_feats,
                                         src_feats=matching_src_feats,
@@ -279,6 +286,7 @@ class EncoderFreeSplat(Encoder[EncoderFreeSplatCfg]):
                                         min_depth=near,
                                         max_depth=far,
                                     )
+        
 
         cost_volume_features = self.cv_encoder(
                                 cost_volume, 
@@ -305,19 +313,17 @@ class EncoderFreeSplat(Encoder[EncoderFreeSplatCfg]):
                                         device=gaussians_feats.device)
         xy_ray = xy_ray + offset_xy
 
-        coords = []
-        for i in range(b):
-            coords.append(self.gaussian_adapter.forward(
-                    rearrange(context["extrinsics"][i:i+1], "b v i j -> b v () () () i j"),
-                    rearrange(context["intrinsics"][i:i+1], "b v i j -> b v () () () i j"),
-                    rearrange(xy_ray[i:i+1], "b v r srf xy -> b v r srf () xy"),
-                    depths[i:i+1],
-                    densities[i:i+1],
-                    gaussians_feats[i:i+1],
+        
+        coords.append(self.gaussian_adapter.forward(
+                    rearrange(context["extrinsics"], "b v i j -> b v () () () i j"),
+                    rearrange(context["intrinsics"], "b v i j -> b v () () () i j"),
+                    rearrange(xy_ray, "b v r srf xy -> b v r srf () xy"),
+                    depths,
+                    densities,
+                    gaussians_feats,
                     (h, w),
                     fusion=True,
                 ))
-        coords = [torch.cat(coords, dim=0)]
         gaussians.append(gaussians_feats)
 
         results[f'depth_num0_s-1'] = depths
@@ -354,11 +360,13 @@ class EncoderFreeSplat(Encoder[EncoderFreeSplatCfg]):
             cur_densities = densities[b:b+1]
             cur_weights = weights[b:b+1]
             cur_depth = rearrange(depth_outputs[f'depth_pred_s-1_b1hw'], "(b v) c h w -> b v c h w", b=B)[b]
+            
             cur_gaussians, cur_coords, cur_extrinsics, cur_depths = self.fuse_gaussians(cur_gs, cur_coords, 
                                             cur_densities, cur_weights, 
                                             cur_depth, 
                                             context["extrinsics"][b:b+1], \
                                             context["intrinsics"][b:b+1], context['image_shape'])
+
 
             cur_gaussians_now = rearrange(
                             self.to_gaussians(cur_gaussians),

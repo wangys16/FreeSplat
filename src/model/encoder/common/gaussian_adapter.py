@@ -175,12 +175,12 @@ class GaussianAdapter(nn.Module):
             _, directions = get_world_rays(coordinates, extrinsics, intrinsics)
             means = torch.zeros_like(directions, device=directions.device)
             b, v = intrinsics.shape[:2]
-            intrinsic = intrinsics[0,0].clone().view(3,3)
-            intrinsic[:1,:] *= w
-            intrinsic[1:2,:] *= h
-            depth_to_pcd_now = Create_from_depth_map(intrinsic, height=h, width=w,
-                                            depth_trunc=15)
             for i in range(b):
+                intrinsic = intrinsics[i,0].clone().view(3,3)
+                intrinsic[:1,:] *= w
+                intrinsic[1:2,:] *= h
+                depth_to_pcd_now = Create_from_depth_map(intrinsic, height=h, width=w,
+                                                depth_trunc=15)
                 for j in range(v):
                     pcd_w1_now = depth_to_pcd_now.project(depths[i,j].view(h,w), extrinsics[i,j].view(4,4))
                     means[i,j] = pcd_w1_now[:,None,None]

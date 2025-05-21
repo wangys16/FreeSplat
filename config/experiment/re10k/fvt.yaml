@@ -25,6 +25,7 @@ model:
     num_depth_candidates: 128
     image_H: 256
     image_W: 256
+    log_planes: False
 
 data_loader:
   train:

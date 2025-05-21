@@ -26,6 +26,7 @@ class DepthDecoder(nn.Module):
                 near=0.5,
                 far=15.0,
                 num_samples=64,
+                log_planes=True,
             ):
         super().__init__()
 
@@ -75,16 +76,25 @@ class DepthDecoder(nn.Module):
                         nn.Conv2d(num_ch_out, self.num_output_channels, 1),
                         )
 
-
-        depth_candi_curr = (
-            torch.log(torch.tensor(near))
-            + torch.linspace(0.0, 1.0, num_samples).unsqueeze(0)
-            * torch.log(torch.tensor(far / near))
-        )
+        self.log_planes = log_planes
+        if log_planes:
+            depth_candi_curr = (
+                torch.log(torch.tensor(near))
+                + torch.linspace(0.0, 1.0, num_samples).unsqueeze(0)
+                * torch.log(torch.tensor(far / near))
+            )
+        else:
+            min_depth = 1.0 / far
+            max_depth = 1.0 / near
+            depth_candi_curr = (
+                max_depth
+                + torch.linspace(0.0, 1.0, num_samples).unsqueeze(0)
+                * (min_depth - max_depth)
+            )
         self.depth_candi_curr = repeat(depth_candi_curr, "vb d -> vb d () ()")  # [vxb, d, 1, 1]
 
         self.conv_depth = nn.ModuleDict()
-    
+        
         for i in range(4):
             self.conv_depth[f'{i}'] = nn.Sequential(
                                 BasicBlock(self.num_output_channels, num_samples),
@@ -120,7 +130,10 @@ class DepthDecoder(nn.Module):
         for i in range(self.max_depth-1,-1,-1):
             depth_planes = F.softmax(self.conv_depth[f'{i}'](depth_outputs[f"output_pred_s{i}_b1hw"]), dim=1)
             coarse_disps = (self.depth_candi_curr.to(depth_planes.device) * depth_planes).sum(dim=1, keepdim=True)
-            depth_outputs[f'depth_pred_s{i}_b1hw'] = torch.exp(coarse_disps)
+            if self.log_planes:
+                depth_outputs[f'depth_pred_s{i}_b1hw'] = torch.exp(coarse_disps)
+            else:
+                depth_outputs[f'depth_pred_s{i}_b1hw'] = 1.0 / coarse_disps
             depth_outputs[f'log_depth_pred_s{i}_b1hw'] = coarse_disps
 
         fine_disps = F.interpolate(
@@ -129,11 +142,8 @@ class DepthDecoder(nn.Module):
             mode="bilinear",
             align_corners=True,
         )
-        depth_map = torch.exp(fine_disps)
+        depth_map = torch.exp(fine_disps) if self.log_planes else 1.0 / fine_disps
         depth_outputs['depth_pred_s-1_b1hw'] = depth_map
-        normed_depth = depth_map / depth_map.max()
-        weights = torch.exp(-1.0 * (normed_depth**2) / 0.72).detach()
-        depth_outputs['depth_weights'] = weights
         depth_outputs[f"output_pred_s-1_b1hw"] = self.conv_last(upsample(depth_outputs[f"output_pred_s0_b1hw"]))
         depth_outputs['depth_weights'] = F.interpolate(depth_planes,
                                                         scale_factor=2,

@@ -127,6 +127,12 @@ def train(cfg_dict: DictConfig):
         num_context_views=cfg.dataset.view_sampler.num_context_views,
         dataset_name=cfg.dataset.name,
     )
+    if not cfg_dict.strict:
+        current_model_dict = model_wrapper.state_dict()
+        loaded_state_dict = torch.load(checkpoint_path, map_location=torch.device('cpu'))['state_dict']
+        new_state_dict={k:v if v.size()==current_model_dict[k].size() else current_model_dict[k] for k,v in zip(current_model_dict.keys(), loaded_state_dict.values())}
+        model_wrapper.load_state_dict(new_state_dict, strict=False)
+        checkpoint_path = None
 
     data_module = DataModule(cfg.dataset, cfg.data_loader, step_tracker)
 

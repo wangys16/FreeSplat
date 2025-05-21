@@ -226,7 +226,7 @@ class ModelWrapper(LightningModule):
 
     def training_step(self, batch, batch_idx):
         batch: BatchedExample = self.data_shim(batch)
-        _, _, _, h, w = batch["target"]["image"].shape
+        B, _, _, h, w = batch["target"]["image"].shape
         
         encoder_results = self.encoder(batch["context"], self.global_step, False, is_testing=False)
         
@@ -262,11 +262,35 @@ class ModelWrapper(LightningModule):
                 pass
         output_dr = None
         target_gt = batch["target"]["image"]
-        
-        # for index, color in zip(batch["target"]["index"][0], output.color[0]):
-        #     # print('saving image to ', path / scene / f"color/{index:0>6}.png")
-        #     save_image(color, Path(f"outputs/debug/{index:0>6}.png"))
-        # exit(0)
+
+        # if B == 1:
+        #     for b in range(output.color.shape[0]):
+        #         for index, color, gt in zip(batch["target"]["index"][b], output.color[b], target_gt[b]):
+        #             # print('saving image to ', path / scene / f"color/{index:0>6}.png")
+        #             save_image(color, Path(f"outputs/debug/{self.global_step}_{index:0>6}.png"))
+        #             save_image(gt, Path(f"outputs/debug/{self.global_step}_{index:0>6}_gt.png"))
+                
+        #         for i, index, fig in zip(range(len(batch["context"]["index"][b])), batch["context"]["index"][b], batch["context"]["image"][b]):
+        #             save_image(fig, f"outputs/debug/{self.global_step}_{index:0>6}_context.png")
+        #             save_image(torch.from_numpy(convert_array_to_pil(encoder_results[f"depth_num0_s-1"][b][i].detach().cpu().numpy().reshape(h,w), no_text=True).transpose(2,0,1)\
+        #                                         .astype(np.float32)/255).to(batch["context"]["image"][b].device), f"outputs/debug/{self.global_step}_{index:0>6}_depth.png")
+            
+        #     torch.save(gaussians[0].means, f"outputs/debug/{self.global_step}_means.pt")
+
+        # else:
+        #     for b in range(output.color.shape[0]):
+        #         for index, color, gt in zip(batch["target"]["index"][b], output.color[b], target_gt[b]):
+        #             # print('saving image to ', path / scene / f"color/{index:0>6}.png")
+        #             save_image(color, Path(f"outputs/debug_/{b}_{index:0>6}.png"))
+        #             save_image(gt, Path(f"outputs/debug_/{b}_{index:0>6}_gt.png"))
+                
+        #         for i, index, fig in zip(range(len(batch["context"]["index"][b])), batch["context"]["index"][b], batch["context"]["image"][b]):
+        #             save_image(fig, f"outputs/debug_/{b}_{index:0>6}_context.png")
+        #             save_image(torch.from_numpy(convert_array_to_pil(encoder_results[f"depth_num0_s-1"][b][i].detach().cpu().numpy().reshape(h,w), no_text=True).transpose(2,0,1)\
+        #                                         .astype(np.float32)/255).to(batch["context"]["image"][b].device), f"outputs/debug_/{b}_{index:0>6}_depth.png")
+
+        #         torch.save(gaussians[b].means, f"outputs/debug_/{b}_means.pt")
+        #     exit(0)
 
         psnr_probabilistic = compute_psnr(
             rearrange(target_gt, "b v c h w -> (b v) c h w"),
@@ -380,8 +404,9 @@ class ModelWrapper(LightningModule):
             fvs_length = batch["target"]["test_fvs"]
             test_fvs = fvs_length > 0
         except:
+            fvs_length = 0
             test_fvs = False
-                
+            
         count = 0
         for i, index, fig in zip(range(len(batch["context"]["index"][0])), batch["context"]["index"][0], batch["context"]["image"][0]):
             length = len(encoder_results[f"depth_num0_s-1"][0])
@@ -392,14 +417,19 @@ class ModelWrapper(LightningModule):
             
 
         
-        
-        for index, depth_render, depth_gt in zip(batch["target"]["index"][0], output.depth[0], batch["target"]['depth'][0,:,0]):
+        for i, index in enumerate(batch["target"]["index"][0]):
+            depth_render = output.depth[0][i]
+
             save_image(torch.from_numpy(convert_array_to_pil(depth_render.cpu().numpy(), no_text=True).transpose(2,0,1)\
                                             .astype(np.float32)/255).to(batch["context"]["image"][0].device),
                                             path / scene / f"depth_render/{index:0>6}.png")
-            save_image(torch.from_numpy(convert_array_to_pil(depth_gt.cpu().numpy(), no_text=True).transpose(2,0,1)\
-                                            .astype(np.float32)/255).to(batch["context"]["image"][0].device),
-                                            path / scene / f"depth_render_gt/{index:0>6}.png")
+            
+            if 'depth' in batch["target"]:
+                depth_gt = batch["target"]['depth'][0][i]
+                
+                save_image(torch.from_numpy(convert_array_to_pil(depth_gt.cpu().numpy(), no_text=True).transpose(2,0,1)\
+                                                .astype(np.float32)/255).to(batch["context"]["image"][0].device),
+                                                path / scene / f"depth_render_gt/{index:0>6}.png")
 
         for index, color, color_gt in zip(batch["target"]["index"][0], output.color[0], batch["target"]["image"][0]):
             if not test_fvs:

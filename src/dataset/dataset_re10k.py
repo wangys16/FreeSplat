@@ -53,6 +53,7 @@ class DatasetRE10k(IterableDataset):
                 [path for path in root.iterdir() if path.suffix == ".torch"]
             )
             self.chunks.extend(root_chunks)
+        
 
     def shuffle(self, lst: list) -> list:
         indices = torch.randperm(len(lst))
@@ -61,8 +62,8 @@ class DatasetRE10k(IterableDataset):
     def __iter__(self):
         # Chunks must be shuffled here (not inside __init__) for validation to show
         # random chunks.
-        if self.stage in ("train", "val"):
-            self.chunks = self.shuffle(self.chunks)
+        # if self.stage in ("train", "val"):
+        #     self.chunks = self.shuffle(self.chunks)
 
         # When testing, the data loaders alternate chunks.
         worker_info = torch.utils.data.get_worker_info()
