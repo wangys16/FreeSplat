@@ -263,35 +263,6 @@ class ModelWrapper(LightningModule):
         output_dr = None
         target_gt = batch["target"]["image"]
 
-        # if B == 1:
-        #     for b in range(output.color.shape[0]):
-        #         for index, color, gt in zip(batch["target"]["index"][b], output.color[b], target_gt[b]):
-        #             # print('saving image to ', path / scene / f"color/{index:0>6}.png")
-        #             save_image(color, Path(f"outputs/debug/{self.global_step}_{index:0>6}.png"))
-        #             save_image(gt, Path(f"outputs/debug/{self.global_step}_{index:0>6}_gt.png"))
-                
-        #         for i, index, fig in zip(range(len(batch["context"]["index"][b])), batch["context"]["index"][b], batch["context"]["image"][b]):
-        #             save_image(fig, f"outputs/debug/{self.global_step}_{index:0>6}_context.png")
-        #             save_image(torch.from_numpy(convert_array_to_pil(encoder_results[f"depth_num0_s-1"][b][i].detach().cpu().numpy().reshape(h,w), no_text=True).transpose(2,0,1)\
-        #                                         .astype(np.float32)/255).to(batch["context"]["image"][b].device), f"outputs/debug/{self.global_step}_{index:0>6}_depth.png")
-            
-        #     torch.save(gaussians[0].means, f"outputs/debug/{self.global_step}_means.pt")
-
-        # else:
-        #     for b in range(output.color.shape[0]):
-        #         for index, color, gt in zip(batch["target"]["index"][b], output.color[b], target_gt[b]):
-        #             # print('saving image to ', path / scene / f"color/{index:0>6}.png")
-        #             save_image(color, Path(f"outputs/debug_/{b}_{index:0>6}.png"))
-        #             save_image(gt, Path(f"outputs/debug_/{b}_{index:0>6}_gt.png"))
-                
-        #         for i, index, fig in zip(range(len(batch["context"]["index"][b])), batch["context"]["index"][b], batch["context"]["image"][b]):
-        #             save_image(fig, f"outputs/debug_/{b}_{index:0>6}_context.png")
-        #             save_image(torch.from_numpy(convert_array_to_pil(encoder_results[f"depth_num0_s-1"][b][i].detach().cpu().numpy().reshape(h,w), no_text=True).transpose(2,0,1)\
-        #                                         .astype(np.float32)/255).to(batch["context"]["image"][b].device), f"outputs/debug_/{b}_{index:0>6}_depth.png")
-
-        #         torch.save(gaussians[b].means, f"outputs/debug_/{b}_means.pt")
-        #     exit(0)
-
         psnr_probabilistic = compute_psnr(
             rearrange(target_gt, "b v c h w -> (b v) c h w"),
             rearrange(output.color, "b v c h w -> (b v) c h w"),
